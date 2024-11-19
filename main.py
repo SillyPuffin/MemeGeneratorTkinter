@@ -1,15 +1,31 @@
 import tkinter as tk
-import customtkinter as ctk
 from tkinter import filedialog
-from PIL import ImageDraw
+from scripts import *
 
-root = tk.Tk()
-root.geometry()
+class Main():
+    def __init__(self):
+        #setting core variables
+        self.currentAccount = None
+        self.root = tk.Tk()
+
+        #database variables
+        self.accountDatabasePath = "databases/accounts.db"
+        self.folderNamePath = "databases/folderNames.db"
+
+        #creating window
+        screenSize = self.GetScreenSize()
+        self.root.geometry(f"{screenSize[0]}x{screenSize[1]}")
+
+        #go to login screen
+        login = LoginScreen(self)
+
+    
+    def GetScreenSize(self):
+        width = self.root.winfo_screenwidth()
+        height = self.root.winfo_screenheight()
+        return (width,height)
 
 
-frame = tk.Frame(master=root,bg="#083212",height=200, width = 200)
-ctk.CTkButton(master=frame,text="hello",corner_radius=20,fg_color="green").place(rely=0.5,relx=0.5,anchor="center")
-
-frame.pack(fill=tk.BOTH,side=tk.TOP,expand=True)
-
-root.mainloop()
+if __name__ == "__main__":
+    app = Main()
+    app.root.mainloop()
