@@ -7,6 +7,7 @@ class Main():
         #setting core variables
         self.currentAccount = None
         self.root = tk.Tk()
+        self.root.title("Meme Maker")
 
         #database variables
         self.accountDatabasePath = "databases/accounts.db"
@@ -17,7 +18,8 @@ class Main():
         self.root.geometry(f"{screenSize[0]}x{screenSize[1]}")
 
         #go to login screen
-        login = LoginScreen(self)
+        self.login = LoginScreen(self)
+        self.login.createLoginScreen()
 
     
     def GetScreenSize(self):
