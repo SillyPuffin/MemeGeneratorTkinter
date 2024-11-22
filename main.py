@@ -19,7 +19,8 @@ class Main():
 
         #go to login screen
         self.login = LoginScreen(self)
-        self.login.createLoginScreen()
+        self.login.createMainFrame()
+        self.login.createLoginForm()
 
     
     def GetScreenSize(self):
