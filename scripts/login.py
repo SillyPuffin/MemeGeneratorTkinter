@@ -7,6 +7,7 @@ from scripts import colours
 class LoginScreen():
     def __init__(self, main):
         self.root = main.root
+        self.showPass = False
         self.accountDatabasePaht = main.accountDatabasePath
         self.folderDatabasePath = main.folderNamePath
     
@@ -26,18 +27,37 @@ class LoginScreen():
 
         #sign in subheading
         loginTypelabel = tk.Label(master=loginForm, text='Sign In', font=("Calibri",45), bg=colours.backgroundHighlight, fg=colours.Heading)
-        loginTypelabel.grid(row=0, column=0, sticky='w',padx=10,pady=5)
+        loginTypelabel.grid(row=0, column=0, sticky='w',padx=20,pady=5)
 
         #divider line
         divider1 = tk.Frame(master=loginForm, bg=colours.backgroundShadow, height=2 ,width=entryWidth)
         divider1.grid(column=0,row=1,padx=5,pady=10)
 
         #entries
-        user = ctk.CTkEntry(master=loginForm,font=("Microsoft YaHei UI light", 30), height=entryHeight, width=entryWidth )
-        user.grid(row=2,column = 0, sticky="S",pady=5,padx=15)
+        self.user = ctk.CTkEntry(master=loginForm,font=("Microsoft YaHei UI light", 30), height=entryHeight, width=entryWidth )
+        self.user.grid(row=2,column = 0, sticky="S",pady=5,padx=15)
+        #refill with username when empty
+        self.user.insert(0,'username')
+        self.user.bind('<FocusOut>',self.OnExitUser)
+        self.user.bind('<FocusIn>', self.OnEntryUser)
 
-        password = ctk.CTkEntry(master=loginForm,font=("Microsoft YaHei UI light", 30), height=entryHeight, width=entryWidth )
-        password.grid(row=3,column = 0, sticky="N",pady=5,padx=15)
+        #password entry and show password button frame
+        passwordFrame = tk.Frame(master=loginForm, background=colours.backgroundHighlight)
+
+        buttonWidth = 10
+        showPassButton = ctk.CTkButton(master=passwordFrame,text='show',height=entryHeight,width=10)
+        self.password = ctk.CTkEntry(master=passwordFrame,font=("Microsoft YaHei UI light", 30), height=entryHeight, width=entryWidth-buttonWidth-8 )
+
+        self.password.pack(side=tk.LEFT,padx=4)
+        showPassButton.pack(side=tk.LEFT,padx=4)
+
+        passwordFrame.grid(row=3,column=0,pady=5)
+        #refill password when empty
+        self.password.insert(0,'password')
+        self.password.bind("<FocusOut>",self.OnExitPass)
+        self.password.bind("<FocusIn>",self.OnEntryPass)
+
+        #show pass button
 
         #second divider line
         divider2 = tk.Frame(master=loginForm, bg=colours.backgroundShadow, height=2 ,width=entryWidth)
@@ -47,7 +67,7 @@ class LoginScreen():
         signIn = ctk.CTkButton(master=loginForm, width=entryWidth, height=50, fg_color=colours.button,hover_color=colours.buttonHover, corner_radius=8, text="Sign In",font=('Calibir',20))
         signIn.grid(row=5,column=0,pady=10)
 
-        #switch to signup button
+        #switch to signup button and label
         switchToCreateFrame = tk.Frame(master=loginForm, background=colours.backgroundHighlight)
         switchToCreateFrame.grid(row=6,column=0,pady=10)
 
@@ -61,3 +81,28 @@ class LoginScreen():
 
     def DestroyLoginScreen(self):
         self.frame.destroy()
+
+    def ToggleShowPassword(self):
+        self.showPass = not self.showPass
+
+    def ReplaceDefaultText(self,text,entry):
+        if entry.get() == '':
+            entry.insert(0,text)
+        
+    def DeleteDefaultText(self,text,entry):
+        if entry.get() == text:
+            entry.delete(0,tk.END)
+
+    #placin and removing default text for username
+    def OnExitUser(self,event):
+        self.ReplaceDefaultText('username',self.user)
+
+    def OnEntryUser(self,event):
+        self.DeleteDefaultText('username',self.user)
+    
+    #placing and removing defualt text for password
+    def OnExitPass(self,event):
+        self.ReplaceDefaultText('password',self.password)
+    
+    def OnEntryPass(self,event):
+        self.DeleteDefaultText('password',self.password)
