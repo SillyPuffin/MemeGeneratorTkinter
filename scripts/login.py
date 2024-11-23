@@ -1,7 +1,9 @@
 import tkinter as tk
 import customtkinter as ctk
 from time import sleep
+from PIL import ImageTk, Image
 
+#my moduels
 from scripts import colours
 
 
@@ -11,6 +13,8 @@ class LoginScreen():
         self.showPass = True
         self.accountDatabasePaht = main.accountDatabasePath
         self.folderDatabasePath = main.folderNamePath
+
+        self.showImage = ImageTk.PhotoImage(Image.open("Graphics/showHide.png"))
 
         self.entryWidth = 500
         self.entryHeight = 50
@@ -43,7 +47,7 @@ class LoginScreen():
         #creating show pass button  
         TargetButtonWidth = 1 #single pixel will make it as big as it has to be to encompass text
         ButtonPadLeft=5
-        showPassButton = ctk.CTkButton(master=passwordFrame,text='show',height=self.entryHeight,width=TargetButtonWidth,command=self.ToggleShowPassword)
+        showPassButton = ctk.CTkButton(master=passwordFrame, image=self.showImage, text="", width=TargetButtonWidth,fg_color=colours.buttonShadow, height=self.entryHeight, command=self.ToggleShowPassword)
         showPassButton.grid(row=0,column=1,padx=(ButtonPadLeft,0))
         self.root.update() #update to make sure the width recieved is up to date
         ActualButtonWidth = showPassButton.winfo_width()
@@ -195,7 +199,7 @@ class LoginScreen():
     def OnExitPass(self,event):
         """Re-enter default password text when unfocusing the textbox"""
         if self.password.get() == "":
-            self.userTyped = False
+            self.userTypedPass = False
             self.showPass = True
             self.ReplaceDefaultText("Password",self.password)
             self.setShowCharacter()

@@ -6,3 +6,5 @@ backgroundShadow = "#49473f"
 button = '#10d127'
 buttonHover = '#1a7f32'
 buttonPress = ''
+
+buttonShadow = "#2f455b"
