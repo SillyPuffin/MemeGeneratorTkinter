@@ -181,16 +181,19 @@ class LoginScreen():
 
 #placin and removing default text for username
     def OnExitUser(self,event):
+        """re-enter username when the text box is empty"""
         if self.user.get() == "":
             self.userTypedusername = False
             self.ReplaceDefaultText('Username',self.user)
 
     def OnEntryUser(self,event):
+        """remove username default text when clicking on text box"""
         if not self.userTypedusername:
             self.DeleteDefaultText('Username',self.user)
     
 #placing and removing defualt text for password
     def OnExitPass(self,event):
+        """Re-enter default password text when unfocusing the textbox"""
         if self.password.get() == "":
             self.userTyped = False
             self.showPass = True
@@ -198,6 +201,7 @@ class LoginScreen():
             self.setShowCharacter()
 
     def OnEntryPass(self,event):
+        """remove the default password text when clicking on the textbox"""
         if not self.userTypedPass:
             self.DeleteDefaultText("Password",self.password)
             self.showPass = False
