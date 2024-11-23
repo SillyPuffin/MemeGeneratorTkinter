@@ -8,7 +8,7 @@ from scripts import colours
 class LoginScreen():
     def __init__(self, main):
         self.root = main.root
-        self.showPass = False
+        self.showPass = True
         self.accountDatabasePaht = main.accountDatabasePath
         self.folderDatabasePath = main.folderNamePath
 
@@ -25,37 +25,36 @@ class LoginScreen():
 
         #entries-----------------------------------------------------------------------------------------------
 
-            #username#####
-        self.user = ctk.CTkEntry(master=masterFrame,font=("Microsoft YaHei UI light", 30), height=self.entryHeight, width=self.entryWidth )
+        #username#####
+        self.user = ctk.CTkEntry(master=masterFrame,font=("Microsoft YaHei UI light", 30), height=self.entryHeight, width=self.entryWidth, text_color='grey' )
         self.user.grid(row=2,column = 0, sticky="S",pady=5,padx=15)
 
         #refill with username when empty
-        self.user.insert(0,'username')
+        self.user.insert(0,'Username')
         self.user.bind('<FocusOut>',self.OnExitUser)
         self.user.bind('<FocusIn>', self.OnEntryUser)
 
-            #password entry and show password button frame########
+        #password entry and show password button frame########
         passwordFrame = tk.Frame(master=masterFrame, background=colours.backgroundHighlight)
 
         TargetButtonWidth = 1 #single pixel will make it as big as it has to be to encompass text
         ButtonPadLeft=5
-                #creating show pass button
+        #creating show pass button
         showPassButton = ctk.CTkButton(master=passwordFrame,text='show',height=self.entryHeight,width=TargetButtonWidth,command=self.ToggleShowPassword)
         showPassButton.grid(row=0,column=1,padx=(ButtonPadLeft,0))
         self.root.update()
         ActualButtonWidth = showPassButton.winfo_width()
 
-                #creating password entry box
-        self.password = ctk.CTkEntry(master=passwordFrame,font=("Microsoft YaHei UI light", 30), height=self.entryHeight, width=self.entryWidth-(ActualButtonWidth+ButtonPadLeft) )
+        #creating password entry box
+        self.password = ctk.CTkEntry(master=passwordFrame,font=("Microsoft YaHei UI light", 30), height=self.entryHeight, width=self.entryWidth-(ActualButtonWidth+ButtonPadLeft), text_color='grey' )
         self.password.grid(row=0,column=0)
 
-                #refill password when empty
-        self.passString = ""
-        self.password.insert(0,'password')
+        #refill password when empty
+        self.userTypedPass = False ###keeps track of whethere the text in the password entry box is typed by the user or inserted to display which box it is
+        self.password.insert(0,'Password')
         self.password.bind("<FocusOut>",self.OnExitPass)
         self.password.bind("<FocusIn>",self.OnEntryPass)
-        self.password.bind("<KeyPress>",self.GetTypedLetter)
-        self.password.bind("<BackSpace>",self.DoBackspace)
+        self.password.bind("<KeyPress>",self.OnKeyPressPass)
         
         passwordFrame.grid(row=3,column=0,pady=5)
 
@@ -146,9 +145,9 @@ class LoginScreen():
 #entrylogic
     def ToggleShowPassword(self):
         """toggles the show password bool"""
-        if self.passString!="":
+        if not(self.password.get() == "Password" and self.userTyped == False):
             self.showPass = not self.showPass
-        self.setShowCharacter()
+            self.setShowCharacter()
 
     def setShowCharacter(self):
         """sets the password entry boxes' show character based on showPass"""
@@ -157,40 +156,40 @@ class LoginScreen():
         else:
             self.password.configure(show="*")
 
-    def GetTypedLetter(self,event):
-        """adds letters on to the offscreen password string"""
-        self.passString += event.char
+    def OnKeyPressPass(self,event):
+        """set the user typed Pass variable to true when a key is pressed on pass entry box"""
+        self.userTypedPass = True
     
-    def DoBackspace(self,event):
-        '''removes letters from the passstring when backspace pressed'''
-        self.passString = self.passString[0:-1]
-
+##default text logic
     def ReplaceDefaultText(self,text,entry):
         """reenters password or username when the entery box is empty"""
         if entry.get() == '':
             entry.insert(0,text)
+            entry.configure(text_color='grey')
         
     def DeleteDefaultText(self,text,entry):
         """deletes the default text when you click on the text box"""
         if entry.get() == text:
             entry.delete(0,tk.END)
+            entry.configure(text_color='white')
 
 #placin and removing default text for username
     def OnExitUser(self,event):
-        self.ReplaceDefaultText('username',self.user)
+        self.ReplaceDefaultText('Username',self.user)
 
     def OnEntryUser(self,event):
-        self.DeleteDefaultText('username',self.user)
+        self.DeleteDefaultText('Username',self.user)
     
 #placing and removing defualt text for password
     def OnExitPass(self,event):
-        self.ReplaceDefaultText('password',self.password)
-        if self.passString=="":
-            self.showPass= True
+        if self.password.get() == "":
+            self.userTyped = False
+            self.showPass = True
+            self.ReplaceDefaultText("Password",self.password)
             self.setShowCharacter()
 
     def OnEntryPass(self,event):
-        if self.passString == "":
-            self.DeleteDefaultText('password',self.password)
-            self.showPass=False
+        if not self.userTypedPass:
+            self.DeleteDefaultText("Password",self.password)
+            self.showPass = False
             self.setShowCharacter()
