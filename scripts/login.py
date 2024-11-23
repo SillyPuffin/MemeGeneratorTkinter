@@ -30,19 +30,22 @@ class LoginScreen():
         self.user.grid(row=2,column = 0, sticky="S",pady=5,padx=15)
 
         #refill with username when empty
+        self.userTypedusername = False
         self.user.insert(0,'Username')
         self.user.bind('<FocusOut>',self.OnExitUser)
         self.user.bind('<FocusIn>', self.OnEntryUser)
+        self.user.bind("<KeyPress>", self.OnKeyPressUser)
 
         #password entry and show password button frame########
         passwordFrame = tk.Frame(master=masterFrame, background=colours.backgroundHighlight)
+        passwordFrame.grid(row=3,column=0,pady=5)
 
+        #creating show pass button  
         TargetButtonWidth = 1 #single pixel will make it as big as it has to be to encompass text
         ButtonPadLeft=5
-        #creating show pass button
         showPassButton = ctk.CTkButton(master=passwordFrame,text='show',height=self.entryHeight,width=TargetButtonWidth,command=self.ToggleShowPassword)
         showPassButton.grid(row=0,column=1,padx=(ButtonPadLeft,0))
-        self.root.update()
+        self.root.update() #update to make sure the width recieved is up to date
         ActualButtonWidth = showPassButton.winfo_width()
 
         #creating password entry box
@@ -56,7 +59,6 @@ class LoginScreen():
         self.password.bind("<FocusIn>",self.OnEntryPass)
         self.password.bind("<KeyPress>",self.OnKeyPressPass)
         
-        passwordFrame.grid(row=3,column=0,pady=5)
 
         #second divider line
         divider2 = tk.Frame(master=masterFrame, bg=colours.backgroundShadow, height=2 ,width=self.entryWidth)
@@ -160,6 +162,10 @@ class LoginScreen():
         """set the user typed Pass variable to true when a key is pressed on pass entry box"""
         self.userTypedPass = True
     
+    def OnKeyPressUser(self,event):
+        """set the user typed username variable to true when a key is pressed on user entry box"""
+        self.userTypedusername = True
+    
 ##default text logic
     def ReplaceDefaultText(self,text,entry):
         """reenters password or username when the entery box is empty"""
@@ -175,10 +181,13 @@ class LoginScreen():
 
 #placin and removing default text for username
     def OnExitUser(self,event):
-        self.ReplaceDefaultText('Username',self.user)
+        if self.user.get() == "":
+            self.userTypedusername = False
+            self.ReplaceDefaultText('Username',self.user)
 
     def OnEntryUser(self,event):
-        self.DeleteDefaultText('Username',self.user)
+        if not self.userTypedusername:
+            self.DeleteDefaultText('Username',self.user)
     
 #placing and removing defualt text for password
     def OnExitPass(self,event):
