@@ -28,36 +28,41 @@ class LoginScreen():
         divider1 = tk.Frame(master=self.loginForm, bg=colours.backgroundShadow, height=2 ,width=entryWidth)
         divider1.grid(column=0,row=1,padx=5,pady=10)
 
-        #entries
+        #entries-----------------------------------------------------------------------------------------------
+
+            #username#####
         self.user = ctk.CTkEntry(master=self.loginForm,font=("Microsoft YaHei UI light", 30), height=entryHeight, width=entryWidth )
         self.user.grid(row=2,column = 0, sticky="S",pady=5,padx=15)
+
         #refill with username when empty
         self.user.insert(0,'username')
         self.user.bind('<FocusOut>',self.OnExitUser)
         self.user.bind('<FocusIn>', self.OnEntryUser)
 
-        #password entry and show password button frame########
+            #password entry and show password button frame########
         passwordFrame = tk.Frame(master=self.loginForm, background=colours.backgroundHighlight)
 
         TargetButtonWidth = 1 #single pixel will make it as big as it has to be to encompass text
         ButtonPadLeft=5
-        #creating show pass button
+                #creating show pass button
         showPassButton = ctk.CTkButton(master=passwordFrame,text='show',height=entryHeight,width=TargetButtonWidth,command=self.ToggleShowPassword)
         showPassButton.grid(row=0,column=1,padx=(ButtonPadLeft,0))
         self.root.update()
         ActualButtonWidth = showPassButton.winfo_width()
 
-        #creating password entry box
+                #creating password entry box
         self.password = ctk.CTkEntry(master=passwordFrame,font=("Microsoft YaHei UI light", 30), height=entryHeight, width=entryWidth-(ActualButtonWidth+ButtonPadLeft) )
         self.password.grid(row=0,column=0)
-        
-        passwordFrame.grid(row=3,column=0,pady=5)
 
-        #refill password when empty
+                #refill password when empty
+        self.passString = ""
         self.password.insert(0,'password')
         self.password.bind("<FocusOut>",self.OnExitPass)
         self.password.bind("<FocusIn>",self.OnEntryPass)
-        self.password.bind("<KeyPress>",self.OnPassLetterTyped)
+        self.password.bind("<KeyPress>",self.GetTypedLetter)
+        self.password.bind("<BackSpace>",self.DoBackspace)
+        
+        passwordFrame.grid(row=3,column=0,pady=5)
 
         #second divider line
         divider2 = tk.Frame(master=self.loginForm, bg=colours.backgroundShadow, height=2 ,width=entryWidth)
@@ -100,11 +105,21 @@ class LoginScreen():
         self.createLoginForm()
 #entrylogic
     def ToggleShowPassword(self):
-        self.showPass = not self.showPass
-        if not self.showPass:
-            self.password.config(show='*')
+        if self.passString!="":
+            self.showPass = not self.showPass
+        self.setShowCharacter()
+
+    def setShowCharacter(self):
+        if self.showPass:
+            self.password.configure(show="")
         else:
-            self.password.config(show='')
+            self.password.configure(show="*")
+
+    def GetTypedLetter(self,event):
+        self.passString += event.char
+    
+    def DoBackspace(self,event):
+        self.passString = self.passString[0:-1]
 
     def ReplaceDefaultText(self,text,entry):
         if entry.get() == '':
@@ -124,6 +139,12 @@ class LoginScreen():
 #placing and removing defualt text for password
     def OnExitPass(self,event):
         self.ReplaceDefaultText('password',self.password)
-    
+        if self.passString=="":
+            self.showPass= True
+            self.setShowCharacter()
+
     def OnEntryPass(self,event):
-        self.DeleteDefaultText('password',self.password)
+        if self.passString == "":
+            self.DeleteDefaultText('password',self.password)
+            self.showPass=False
+            self.setShowCharacter()
