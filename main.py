@@ -10,9 +10,8 @@ class Main():
         self.root.title("Meme Maker")
 
         #database variables
-        self.accountDatabasePath = "databases/accounts.db"
-        self.folderNamePath = "databases/folderNames.db"
-
+        self.DatabasePath = "databases/userdata.db"
+        
         #creating window
         screenSize = self.GetScreenSize()
         self.root.geometry(f"{screenSize[0]}x{screenSize[1]}")

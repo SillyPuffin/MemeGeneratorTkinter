@@ -11,11 +11,10 @@ class LoginScreen():
     def __init__(self, main):
         self.root = main.root
         self.showPass = True
-        self.accountDatabasePaht = main.accountDatabasePath
-        self.folderDatabasePath = main.folderNamePath
+        self.DatabasePaht = main.DatabasePath
+   
 
-        self.showImage = ImageTk.PhotoImage(Image.open("Graphics/showHide.png"))
-
+        self.showImage = ctk.CTkImage(light_image=Image.open("Graphics/showHide.png"),dark_image=Image.open("Graphics/showHide.png"))#ImageTk.PhotoImage(Image.open("Graphics/showHide.png"))
         self.entryWidth = 500
         self.entryHeight = 50
 
@@ -151,7 +150,7 @@ class LoginScreen():
 #entrylogic
     def ToggleShowPassword(self):
         """toggles the show password bool"""
-        if not(self.password.get() == "Password" and self.userTyped == False):
+        if not(self.password.get() == "Password" and self.userTypedPass == False):
             self.showPass = not self.showPass
             self.setShowCharacter()
 
