@@ -39,12 +39,7 @@ def isUsernameInAccounts(username,databasename):
     """return true or false based on if the username is in the accounts table or not"""
     conn,cursor = CreateCursor(databasename)
 
-    cursor.execute("""
-    SELECT *
-    FROM accounts
-    WHERE username == (?)""",
-    (username,)
-    )
+    cursor.execute("SELECT * FROM accounts WHERE username == (?)",(username,))
 
     matchingUsername = cursor.fetchall()
     conn.close()

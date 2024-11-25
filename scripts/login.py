@@ -26,13 +26,13 @@ class LoginScreen():
         """Creates the password and username boxes that you enter details into"""
 
         #divider line
-        divider1 = tk.Frame(master=masterFrame, bg=colours.backgroundShadow, height=2 ,width=self.entryWidth)
+        divider1 = tk.Frame(master=masterFrame, bg=colours.dividerColour, height=2 ,width=self.entryWidth)
         divider1.grid(column=0,row=1,padx=5,pady=10)
 
         #entries-----------------------------------------------------------------------------------------------
 
         #username#####
-        self.user = ctk.CTkEntry(master=masterFrame,font=("Microsoft YaHei UI light", 30), height=self.entryHeight, width=self.entryWidth, text_color='grey' )
+        self.user = ctk.CTkEntry(master=masterFrame,font=("Microsoft YaHei UI light", 30), height=self.entryHeight, width=self.entryWidth, text_color=colours.defaultText, fg_color=colours.textboxBackground, border_color=colours.textboxShadow )
         self.user.grid(row=2,column = 0, sticky="S",pady=5,padx=15)
 
         #refill with username when empty
@@ -47,15 +47,15 @@ class LoginScreen():
         passwordFrame.grid(row=3,column=0,pady=5)
 
         #creating show pass button  
-        TargetButtonWidth = 1 #single pixel will make it as big as it has to be to encompass text
+        TargetButtonWidth = self.entryHeight #single pixel will make it as big as it has to be to encompass text
         ButtonPadLeft=5
-        showPassButton = ctk.CTkButton(master=passwordFrame, image=self.showImage, text="", width=TargetButtonWidth,fg_color=colours.buttonShadow, height=self.entryHeight, command=self.ToggleShowPassword)
+        showPassButton = ctk.CTkButton(master=passwordFrame, image=self.showImage, text="", width=TargetButtonWidth,fg_color=colours.darkbutton, hover_color=colours.darkbuttonHover, height=self.entryHeight, command=self.ToggleShowPassword)
         showPassButton.grid(row=0,column=1,padx=(ButtonPadLeft,0))
         self.root.update() #update to make sure the width recieved is up to date
         ActualButtonWidth = showPassButton.winfo_width()
 
         #creating password entry box
-        self.password = ctk.CTkEntry(master=passwordFrame,font=("Microsoft YaHei UI light", 30), height=self.entryHeight, width=self.entryWidth-(ActualButtonWidth+ButtonPadLeft), text_color='grey' )
+        self.password = ctk.CTkEntry(master=passwordFrame,font=("Microsoft YaHei UI light", 30), height=self.entryHeight, width=self.entryWidth-(ActualButtonWidth+ButtonPadLeft), text_color=colours.defaultText, fg_color=colours.textboxBackground, border_color=colours.textboxShadow )
         self.password.grid(row=0,column=0)
 
         #refill password when empty
@@ -67,16 +67,15 @@ class LoginScreen():
         
 
         #second divider line
-        divider2 = tk.Frame(master=masterFrame, bg=colours.backgroundShadow, height=2 ,width=self.entryWidth)
+        divider2 = tk.Frame(master=masterFrame, bg=colours.dividerColour, height=2 ,width=self.entryWidth)
         divider2.grid(column=0,row=4,padx=5,pady=10)
 
     def createLoginForm(self):
         '''Creates the form that appears in the middle of the screen to enter login details to access an account'''
 
         #login text boxes
-        self.loginForm = ctk.CTkFrame(master = self.frame,border_width=2,border_color="black",corner_radius=6, fg_color=colours.backgroundHighlight)
+        self.loginForm = ctk.CTkFrame(master = self.frame,border_width=2,border_color=colours.backgroundAccent,corner_radius=6, fg_color=colours.backgroundHighlight)
         
-
         #sign in subheading
         loginTypelabel = tk.Label(master=self.loginForm, text='Sign In', font=("Calibri",45), bg=colours.backgroundHighlight, fg=colours.Heading)
         loginTypelabel.grid(row=0, column=0, sticky='w',padx=20,pady=5)
@@ -96,7 +95,8 @@ class LoginScreen():
         dontHaveAccount = tk.Label(master=switchToCreateFrame, text="Don't have an Account?",bg=colours.backgroundHighlight, fg='white')
         dontHaveAccount.pack(side=tk.LEFT)
 
-        signUp = ctk.CTkButton(master=switchToCreateFrame,text='Sign Up?', fg_color='transparent',text_color='#27bee8',width=1,height=1,command=self.SwitchToAccount)
+        #switch to sign up button
+        signUp = ctk.CTkButton(master=switchToCreateFrame,text='Sign Up?', fg_color='transparent',text_color=colours.linkText,width=1,height=1,command=self.SwitchToAccount)
         signUp.pack(side=tk.LEFT)
 
         self.loginForm.place(rely=0.5,relx=0.5,anchor='center')
@@ -104,7 +104,7 @@ class LoginScreen():
     def createAccountForm(self):
         """Creates the box in the middle of the screen for entering details to create a new account"""
         #login text boxes
-        self.accountForm = ctk.CTkFrame(master = self.frame,border_width=2,border_color="black",corner_radius=6, fg_color=colours.backgroundHighlight)
+        self.accountForm = ctk.CTkFrame(master = self.frame,border_width=2,border_color=colours.backgroundAccent,corner_radius=6, fg_color=colours.backgroundHighlight)
 
         #sign in subheading
         SignUpTypelabel = tk.Label(master=self.accountForm, text='Create Account', font=("Calibri",45), bg=colours.backgroundHighlight, fg=colours.Heading)
@@ -125,7 +125,7 @@ class LoginScreen():
         HaveAccount = tk.Label(master=switchToSignInFrame, text="Already Have an account?",bg=colours.backgroundHighlight, fg='white')
         HaveAccount.pack(side=tk.LEFT)
 
-        signIn = ctk.CTkButton(master=switchToSignInFrame,text='Sign In?', fg_color='transparent',text_color='#27bee8',width=1,height=1,command=self.SwitchToLogin)
+        signIn = ctk.CTkButton(master=switchToSignInFrame,text='Sign In?', fg_color='transparent',text_color=colours.linkText,width=1,height=1,command=self.SwitchToLogin)
         signIn.pack(side=tk.LEFT)
 
         self.accountForm.place(rely=0.5,relx=0.5,anchor='center')
@@ -187,7 +187,8 @@ class LoginScreen():
         if self.password.get() != '' and self.userTypedPass == True:
             password = self.password.get()
 
-        if not database.isUsernameInAccounts(username,self.DatabasePath):
+
+        if not database.isUsernameInAccounts(username,self.DatabasePath) and (username != "" and password != ""):
             database.addAccount(username,password, self.DatabasePath)
             #alert if they succeed to create account then switch to login page
             label = ctk.CTkLabel(master=self.accountForm, text='Creating Account', font=("calibri",15),text_color='green')
@@ -200,7 +201,7 @@ class LoginScreen():
             self.SwitchToLogin()
         else:
             #alert if they fail to create the account
-            label = ctk.CTkLabel(master=self.accountForm, text='Username Already Taken', font=("calibri",15),text_color='red')
+            label = ctk.CTkLabel(master=self.accountForm, text='Username Already Taken or Empty', font=("calibri",15),text_color='red')
             label.grid(row=7,column = 0, pady=(0,4))
             self.root.update()
             sleep(1)
@@ -251,13 +252,13 @@ class LoginScreen():
         """reenters password or username when the entery box is empty"""
         if entry.get() == '':
             entry.insert(0,text)
-            entry.configure(text_color='grey')
+            entry.configure(text_color=colours.defaultText)
         
     def DeleteDefaultText(self,text,entry):
         """deletes the default text when you click on the text box"""
         if entry.get() == text:
             entry.delete(0,tk.END)
-            entry.configure(text_color='white')
+            entry.configure(text_color=colours.typeText)
 
 #placin and removing default text for username
     def OnExitUser(self,event):

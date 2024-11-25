@@ -1,16 +1,22 @@
-Heading = "#5BCAA5"
-backgroundColour = "#152434"
-backgroundHighlight = "#253F5B"
-backgroundShadow = "#49473f"
+Heading = "#47bd71"
+backgroundColour = "#1f1f23"
+backgroundHighlight = "#373737"
+backgroundAccent = "#7f7f7f"
 
-button = '#10d127'
-buttonHover = '#1a7f32'
 
-darkbutton = ''
-buttonShadow = "#2f455b"
+button = '#32984b'
+buttonHover = '#287a3c'
 
-textboxBackground=""
-textboxShadow=""
+darkbutton = '#323232'
+darkbuttonHover = "#2c2c2c"
 
-alertText=""
-successText=""
+textboxBackground="#d3dad7"
+textboxShadow= "#7f7f7f"
+
+dividerColour = "#909092"
+
+typeText = 'black'
+defaultText = '#565658'
+linkText = '#27bee8'
+alertText= "red"
+successText= "green"
