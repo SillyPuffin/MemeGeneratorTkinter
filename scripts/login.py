@@ -83,6 +83,8 @@ class LoginScreen():
 
         self.CreateEntryBoxes(self.loginForm)
 
+        self.password.bind("<Return>",self.LoginAccount)
+
         #sign in button
         signIn = ctk.CTkButton(master=self.loginForm, width=self.entryWidth, height=50, fg_color=colours.button,hover_color=colours.buttonHover, corner_radius=8, text="Sign In",font=('Calibri',20),command=self.LoginAccount)
         signIn.grid(row=5,column=0,pady=10)
@@ -109,6 +111,8 @@ class LoginScreen():
         SignUpTypelabel.grid(row=0, column=0, sticky='w',padx=20,pady=5)
 
         self.CreateEntryBoxes(self.accountForm)
+
+        self.password.bind("<Return>",self.CreateAccount)
 
         #sign in button
         signUp = ctk.CTkButton(master=self.accountForm, width=self.entryWidth, height=50, fg_color=colours.button,hover_color=colours.buttonHover, corner_radius=8, text="Sign Up",font=('Calibri',20),command = self.CreateAccount)
@@ -150,7 +154,7 @@ class LoginScreen():
         self.accountForm.destroy()
         self.root.update()
         self.createLoginForm()
-#entrylogic
+##entrylogic
     def ToggleShowPassword(self):
         """toggles the show password bool"""
         if not(self.password.get() == "Password" and self.userTypedPass == False):
@@ -172,7 +176,7 @@ class LoginScreen():
         """set the user typed username variable to true when a key is pressed on user entry box"""
         self.userTypedusername = True
 ##account logic
-    def CreateAccount(self):
+    def CreateAccount(self, event=None):
         """attempt to creaet account if username and password are valid and an account with the same username doesnt exist"""
 
         username = ''
@@ -185,11 +189,24 @@ class LoginScreen():
 
         if not database.isUsernameInAccounts(username,self.DatabasePath):
             database.addAccount(username,password, self.DatabasePath)
-            print("account created successfully")
+            #alert if they succeed to create account then switch to login page
+            label = ctk.CTkLabel(master=self.accountForm, text='Creating Account', font=("calibri",15),text_color='green')
+            label.grid(row=7,column = 0, pady=(0,4))
+            self.root.update()
+            sleep(1)
+            label.configure(text="Switching to sign in.")
+            self.root.update()
+            sleep(1)
+            self.SwitchToLogin()
         else:
-            print("account not created")
+            #alert if they fail to create the account
+            label = ctk.CTkLabel(master=self.accountForm, text='Username Already Taken', font=("calibri",15),text_color='red')
+            label.grid(row=7,column = 0, pady=(0,4))
+            self.root.update()
+            sleep(1)
+            label.destroy()
 
-    def LoginAccount(self):
+    def LoginAccount(self, event=None):
         """try to login the account using the current username and password"""
         username = ''
         password = ''
@@ -207,14 +224,27 @@ class LoginScreen():
                 self.root.update()
                 sleep(1)
 
+                #tell the main class the id of the current account
                 self.main.currentAccount = id
                 self.DestroyMainFrame()
-                #call something to create the gallery but it doesnt exist yet
+
+                #create the gallery view to load into
+                self.main.gallery.createGallery()
 
             elif id == None:
                 #label to show that logging in failed
-                ctk.CTkLabel(master = self.loginForm, text="Username or Password is incorrect.", font = ('calibri',15),text_color='red').grid(column = 0, row =7 , pady=(0,4))
-            
+                self.failLogin()
+        else:
+            self.failLogin()
+    
+    def failLogin(self):
+        """alert the user that their password or username is incorrect"""
+        label = ctk.CTkLabel(master = self.loginForm, text="Username or Password is incorrect.", font = ('calibri',15),text_color='red')
+        label.grid(column = 0, row =7 , pady=(0,4))
+        self.root.update()
+        sleep(1)
+        label.destroy()
+
 
 ##default text logic
     def ReplaceDefaultText(self,text,entry):

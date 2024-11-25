@@ -22,7 +22,7 @@ class Main():
         self.login.createLoginForm()
 
         #create gallery class
-
+        self.gallery = Gallery(self)
     
     def GetScreenSize(self):
         width = self.root.winfo_screenwidth()

@@ -5,6 +5,12 @@ backgroundShadow = "#49473f"
 
 button = '#10d127'
 buttonHover = '#1a7f32'
-buttonPress = ''
 
+darkbutton = ''
 buttonShadow = "#2f455b"
+
+textboxBackground=""
+textboxShadow=""
+
+alertText=""
+successText=""
