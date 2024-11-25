@@ -26,9 +26,59 @@ def ResetDatabases(databasename):
                    );
     """)
 
+    conn.commit()
+    conn.close()
 
-def CreateCursor(tablename):
-    """creates and returns a connection and cursor for the table name supplied"""
-    conn = sqlite3.connect(tablename)
+def CreateCursor(database):
+    """creates and returns a connection and cursor for the database supplied"""
+    conn = sqlite3.connect(database)
     cursor = conn.cursor()
     return conn,cursor
+
+def isUsernameInAccounts(username,databasename):
+    """return true or false based on if the username is in the accounts table or not"""
+    conn,cursor = CreateCursor(databasename)
+
+    cursor.execute("""
+    SELECT *
+    FROM accounts
+    WHERE username == (?)""",
+    (username,)
+    )
+
+    matchingUsername = cursor.fetchall()
+    conn.close()
+
+    if matchingUsername != []:
+        return True
+    else:
+        return False
+    
+def checkPassword(username,password, databasename):
+    """check if the password for a supplied user name is correct. Returns the id if successful else Nonetype"""
+
+    conn, cursor = CreateCursor(databasename)
+    cursor.execute("SELECT * FROM accounts WHERE username == (?)", (username,))
+    accounts = cursor.fetchall()
+    conn.close()
+    
+    if password == accounts[0][2]:
+        return accounts[0][0]
+    else:
+        return None
+    
+def addAccount(username,password,databasename):
+    """add the supplied username and password to the accounts databse and create a foldername and add to the folder database"""
+
+    conn, cursor = CreateCursor(databasename)
+
+    cursor.execute("INSERT INTO accounts (username, password) VALUES (?,?)",(username,password))
+    conn.commit()
+
+    cursor.execute("SELECT account_id FROM accounts WHERE username == (?)",(username,))
+    id = cursor.fetchone()[0]
+
+    cursor.execute("INSERT INTO folders (account_id,folderpath) VALUES (?,?)",(id,f"Memes/{id}"))
+    conn.commit()
+    conn.close()
+

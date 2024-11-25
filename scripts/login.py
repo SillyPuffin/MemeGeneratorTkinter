@@ -1,17 +1,20 @@
 import tkinter as tk
 import customtkinter as ctk
+
 from time import sleep
 from PIL import ImageTk, Image
 
 #my moduels
 from scripts import colours
+from scripts import database
 
 
 class LoginScreen():
     def __init__(self, main):
         self.root = main.root
+        self.main = main
         self.showPass = True
-        self.DatabasePaht = main.DatabasePath
+        self.DatabasePath = main.DatabasePath
    
 
         self.showImage = ctk.CTkImage(light_image=Image.open("Graphics/showHide.png"),dark_image=Image.open("Graphics/showHide.png"))#ImageTk.PhotoImage(Image.open("Graphics/showHide.png"))
@@ -81,7 +84,7 @@ class LoginScreen():
         self.CreateEntryBoxes(self.loginForm)
 
         #sign in button
-        signIn = ctk.CTkButton(master=self.loginForm, width=self.entryWidth, height=50, fg_color=colours.button,hover_color=colours.buttonHover, corner_radius=8, text="Sign In",font=('Calibir',20))
+        signIn = ctk.CTkButton(master=self.loginForm, width=self.entryWidth, height=50, fg_color=colours.button,hover_color=colours.buttonHover, corner_radius=8, text="Sign In",font=('Calibri',20),command=self.LoginAccount)
         signIn.grid(row=5,column=0,pady=10)
 
         #switch to signup button and label
@@ -108,7 +111,7 @@ class LoginScreen():
         self.CreateEntryBoxes(self.accountForm)
 
         #sign in button
-        signUp = ctk.CTkButton(master=self.accountForm, width=self.entryWidth, height=50, fg_color=colours.button,hover_color=colours.buttonHover, corner_radius=8, text="Sign Up",font=('Calibir',20))
+        signUp = ctk.CTkButton(master=self.accountForm, width=self.entryWidth, height=50, fg_color=colours.button,hover_color=colours.buttonHover, corner_radius=8, text="Sign Up",font=('Calibri',20),command = self.CreateAccount)
         signUp.grid(row=5,column=0,pady=10)
 
         #switch to signin button and label
@@ -168,7 +171,51 @@ class LoginScreen():
     def OnKeyPressUser(self,event):
         """set the user typed username variable to true when a key is pressed on user entry box"""
         self.userTypedusername = True
-    
+##account logic
+    def CreateAccount(self):
+        """attempt to creaet account if username and password are valid and an account with the same username doesnt exist"""
+
+        username = ''
+        password = ''
+        if self.user.get() != '' and self.userTypedusername == True:
+            username = self.user.get()
+
+        if self.password.get() != '' and self.userTypedPass == True:
+            password = self.password.get()
+
+        if not database.isUsernameInAccounts(username,self.DatabasePath):
+            database.addAccount(username,password, self.DatabasePath)
+            print("account created successfully")
+        else:
+            print("account not created")
+
+    def LoginAccount(self):
+        """try to login the account using the current username and password"""
+        username = ''
+        password = ''
+        if self.user.get() != '' and self.userTypedusername == True:
+            username = self.user.get()
+
+        if self.password.get() != '' and self.userTypedPass == True:
+            password = self.password.get()
+
+        if database.isUsernameInAccounts(username, self.DatabasePath):
+            id = database.checkPassword(username,password,self.DatabasePath)
+            if id != None:
+                #show a label to let them know that they have logged in
+                ctk.CTkLabel(master=self.loginForm, text= "Logging In ...", text_color="green", font=('calibri',15)).grid(column = 0,row=7,pady=(0,4))
+                self.root.update()
+                sleep(1)
+
+                self.main.currentAccount = id
+                self.DestroyMainFrame()
+                #call something to create the gallery but it doesnt exist yet
+
+            elif id == None:
+                #label to show that logging in failed
+                ctk.CTkLabel(master = self.loginForm, text="Username or Password is incorrect.", font = ('calibri',15),text_color='red').grid(column = 0, row =7 , pady=(0,4))
+            
+
 ##default text logic
     def ReplaceDefaultText(self,text,entry):
         """reenters password or username when the entery box is empty"""

@@ -17,9 +17,11 @@ class Main():
         self.root.geometry(f"{screenSize[0]}x{screenSize[1]}")
 
         #go to login screen
-        self.login = LoginScreen(self)
+        self.login = LoginScreen(self)  
         self.login.createMainFrame()
         self.login.createLoginForm()
+
+        #create gallery class
 
     
     def GetScreenSize(self):
