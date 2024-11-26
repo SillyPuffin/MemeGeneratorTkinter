@@ -7,6 +7,8 @@ class Main():
         #setting core variables
         self.currentAccount = None
         self.root = tk.Tk()
+        self.root.attributes("-fullscreen",True)
+        self.root.bind('<F11>',self.toggleFullscreen)
         self.root.title("Meme Maker")
 
         #database variables
@@ -27,6 +29,11 @@ class Main():
         #create the editor class
         self.editor = Editor(self)
     
+    def toggleFullscreen(self,event):
+        """toggles fullscreen mode"""
+        is_fullscreen = self.root.attributes("-fullscreen")
+        self.root.attributes("-fullscreen",not is_fullscreen)
+
     def closeApp(self):
         """close the whole program"""
         self.root.destroy()

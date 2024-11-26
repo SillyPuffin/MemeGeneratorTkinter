@@ -83,7 +83,10 @@ def getFolderPath(id,databasename)->str:
     conn,cursor = CreateCursor(databasename)
 
     cursor.execute("SELECT folderpath FROM folders WHERE account_id == (?)",(id,))
-    folderPath = cursor.fetchone()[0]
+    folderPath = cursor.fetchone()
+
+    if folderPath != None:
+        folderPath = folderPath[0]
 
     conn.close()
 
