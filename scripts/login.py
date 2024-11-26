@@ -21,6 +21,11 @@ class LoginScreen():
         self.entryWidth = 500
         self.entryHeight = 50
 
+    def setupLoginScreen(self):
+        """creates the login form and screen in one command"""
+        self.createMainFrame()
+        self.createLoginForm()
+
 #gui creation
     def CreateEntryBoxes(self,masterFrame):
         """Creates the password and username boxes that you enter details into"""
@@ -135,6 +140,10 @@ class LoginScreen():
         self.frame = tk.Frame(master=self.root,background=colours.backgroundColour)
         self.frame.pack(fill=tk.BOTH,side=tk.TOP,expand=True)
 
+        #exit button
+        exitButton = ctk.CTkButton(master=self.frame, fg_color=colours.darkbutton,hover_color=colours.darkbuttonHover, text='Exit',width=40,height=10,command=self.main.closeApp)
+        exitButton.pack(anchor='ne', side=tk.TOP,pady=5,padx=10)
+
         #title
         title = tk.Label(master=self.frame,text="Meme Maker", font =('impact',80), fg=colours.Heading, bg = colours.backgroundColour, pady=15)
         title.pack(side=tk.TOP)       
@@ -230,7 +239,7 @@ class LoginScreen():
                 self.DestroyMainFrame()
 
                 #create the gallery view to load into
-                self.main.gallery.createGallery()
+                self.main.gallery.createGalleryScreen(id)
 
             elif id == None:
                 #label to show that logging in failed

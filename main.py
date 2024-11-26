@@ -14,16 +14,23 @@ class Main():
         
         #creating window
         screenSize = self.GetScreenSize()
-        self.root.geometry(f"{screenSize[0]}x{screenSize[1]}")
+        self.root.geometry(f"{screenSize[0]}x{screenSize[1]}+0+0")
 
         #go to login screen
         self.login = LoginScreen(self)  
-        self.login.createMainFrame()
-        self.login.createLoginForm()
+        # self.login.setupLoginScreen
 
         #create gallery class
         self.gallery = Gallery(self)
+        self.gallery.createGalleryScreen(1)
+
+        #create the editor class
+        self.editor = Editor(self)
     
+    def closeApp(self):
+        """close the whole program"""
+        self.root.destroy()
+
     def GetScreenSize(self):
         width = self.root.winfo_screenwidth()
         height = self.root.winfo_screenheight()

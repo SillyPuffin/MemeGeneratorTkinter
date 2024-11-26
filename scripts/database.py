@@ -77,3 +77,14 @@ def addAccount(username,password,databasename):
     conn.commit()
     conn.close()
 
+def getFolderPath(id,databasename)->str:
+    """returns the FolderPath of the users folder"""
+
+    conn,cursor = CreateCursor(databasename)
+
+    cursor.execute("SELECT folderpath FROM folders WHERE account_id == (?)",(id,))
+    folderPath = cursor.fetchone()[0]
+
+    conn.close()
+
+    return folderPath
