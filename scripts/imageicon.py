@@ -13,35 +13,37 @@ class ImageIcon():
         self.imagesize = imagesize
 
         self.maxTextWidth = 20
-        self.width = imagesize + 20
+
+        cutName = name[0:-4]
 
         if len(name) > self.maxTextWidth:
-            tempname = name[0:self.maxTextWidth]
+            tempname = cutName[0:self.maxTextWidth]
             tempname += '-'
             self.displayName = tempname
         else:
-            self.displayName = name
+            self.displayName = cutName
 
         self.createBox()
     
     def createBox(self):
-        """create the elements of the meme icon"""
-        self.frame = ctk.CTkFrame(master= self.gallery.scrollGalleryFrame,fg_color=colours.backgroundHighlight,border_color=colours.backgroundAccent,border_width=3,corner_radius=4)
+        """create the elements of the meme icon and define the width and height"""
+        pad = 5
+        bordersize = 2
+        
+        self.width = self.imagesize + 2*pad + 2*bordersize
 
-        image = tk.Label(master=self.frame, image=self.image,bg=colours.backgroundHighlight,width=self.imagesize,height=self.imagesize)
-        image.bind("<Button-1>",self.openImageInViewer)
+        calibriFont = font.Font(family='calibri', size = 15)
+        
+        #self.height = self.imagesize + calibriFont.metrics('linespace') + pad*4 + bordersize * 2
+        self.height=300
 
-        testfont = font.Font(family='calibri',size=15)
-        textframe=tk.Frame(master=self.frame, width=self.imagesize, background=colours.backgroundHighlight, height=testfont.metrics('linespace'))
-        textframe.pack_propagate(False)
+        self.frame = ctk.CTkFrame(master = self.gallery.frame, width = self.width, height=self.height,corner_radius=4, border_width=bordersize, fg_color=colours.backgroundHighlight, border_color=colours.backgroundAccent)
+        self.frame.pack_propagate(False)
+        imageLabel = tk.Label(master=self.frame, background=colours.backgroundHighlight, image=self.image, width=self.imagesize, height=self.imagesize)
+        imageLabel.pack(padx=pad,pady=(pad,pad))
+        nameLabel = tk.Label(master=self.frame, text=self.displayName, background=colours.backgroundHighlight, foreground='white',font=calibriFont)
 
-        self.textLabel = tk.Label(master=textframe, text=self.displayName, fg='white',bg=colours.backgroundHighlight, font=testfont)
-
-        image.pack(pady=(5,0),padx=(10,10))
-
-        self.textLabel.pack(side=tk.LEFT,anchor='nw')
-
-        textframe.pack(pady=(0,5),padx=(10,10))
+        nameLabel.pack(anchor='w',padx=pad,pady=(pad,pad))
 
     def returnWidth(self):
         """returns the width of the frame of the icon"""

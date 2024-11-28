@@ -110,10 +110,9 @@ class Gallery():
     def packMemeIcons(self):
         """pack all the meme thumbnails to the scroll area"""
         maxWidth = max([icon.returnWidth() for icon in self.memeIcons])
-        print(maxWidth)
-
+        print(self.memeIcons)
         for icon in self.memeIcons:
-            icon.frame.pack(pady=5)
+            icon.frame.pack()
     
     ##logic
     def DestroyMainFrame(self):
