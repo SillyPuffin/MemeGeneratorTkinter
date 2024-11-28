@@ -34,8 +34,8 @@ class ImageIcon():
 
         calibriFont = font.Font(family='calibri', size = 15)
         
-        #self.height = self.imagesize + calibriFont.metrics('linespace') + pad*4 + bordersize * 2
-        self.height=300
+        self.height = self.imagesize + calibriFont.metrics('linespace') + pad*4 + bordersize * 2
+    
 
         self.frame = ctk.CTkFrame(master = self.gallery.frame, width = self.width, height=self.height,corner_radius=4, border_width=bordersize, fg_color=colours.backgroundHighlight, border_color=colours.backgroundAccent)
         self.frame.pack_propagate(False)
