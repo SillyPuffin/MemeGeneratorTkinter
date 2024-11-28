@@ -88,7 +88,6 @@ class Viewer():
         self.imagelabel = tk.Label(master=self.ImageDisplayFrame, bg=colours.backgroundHighlight, image=self.meme)
         self.imagelabel.place(relx=0.5,rely=0.5, anchor ='center')
 
-
     def openNextImage(self):
         pass
 
