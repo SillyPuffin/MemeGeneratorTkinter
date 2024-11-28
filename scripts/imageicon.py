@@ -12,16 +12,7 @@ class ImageIcon():
         self.fullname = name
         self.imagesize = imagesize
 
-        self.maxTextWidth = 20
-
-        cutName = name[0:-4]
-
-        if len(name) > self.maxTextWidth:
-            tempname = cutName[0:self.maxTextWidth]
-            tempname += '-'
-            self.displayName = tempname
-        else:
-            self.displayName = cutName
+        self.cutName = name[0:-4]#removes the file type prefix
 
         self.createBox()
     
@@ -33,21 +24,32 @@ class ImageIcon():
         self.width = self.imagesize + 2*pad + 2*bordersize
 
         calibriFont = font.Font(family='calibri', size = 15)
+
+        #get the string that fits on the image
+        displayName = self.cutName
+        while calibriFont.measure(displayName) > self.imagesize:
+            displayName = displayName[0:-1]
         
         self.height = self.imagesize + calibriFont.metrics('linespace') + pad*4 + bordersize * 2
     
 
-        self.frame = ctk.CTkFrame(master = self.gallery.frame, width = self.width, height=self.height,corner_radius=4, border_width=bordersize, fg_color=colours.backgroundHighlight, border_color=colours.backgroundAccent)
+        self.frame = ctk.CTkFrame(master = self.gallery.scrollGalleryFrame, width = self.width, height=self.height,corner_radius=4, border_width=bordersize, fg_color=colours.backgroundHighlight, border_color=colours.backgroundAccent)
         self.frame.pack_propagate(False)
-        imageLabel = tk.Label(master=self.frame, background=colours.backgroundHighlight, image=self.image, width=self.imagesize, height=self.imagesize)
-        imageLabel.pack(padx=pad,pady=(pad,pad))
-        nameLabel = tk.Label(master=self.frame, text=self.displayName, background=colours.backgroundHighlight, foreground='white',font=calibriFont)
 
-        nameLabel.pack(anchor='w',padx=pad,pady=(pad,pad))
+        imageLabel = tk.Label(master=self.frame, background=colours.backgroundColour, image=self.image, width=self.imagesize, height=self.imagesize)
+        imageLabel.pack(padx=pad,pady=(pad,pad))
+        imageLabel.bind("<Button-1>",self.openImageInViewer)
+
+        nameLabel = tk.Label(master=self.frame, text=displayName, background=colours.backgroundHighlight, foreground='white',font=calibriFont)
+
+        topLeftofLabel = bordersize + pad + self.imagesize + pad
+        percentofHeight = topLeftofLabel/self.height
+
+        nameLabel.place(x=bordersize+pad,y=topLeftofLabel, anchor='nw')
 
     def returnWidth(self):
-        """returns the width of the frame of the icon"""
-        return self.width
+        """returns the width of the frame of the icon + how much padding it should have"""
+        return self.width + 20
 
     def openImageInViewer(self,event):
         """executes the gallery function to open the depicted image in the viewer window"""

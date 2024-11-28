@@ -77,6 +77,20 @@ def addAccount(username,password,databasename):
     conn.commit()
     conn.close()
 
+def getAccountId(username,password, databasename)->int:
+    """returns the account id of a given username and password"""
+    conn,cursor = CreateCursor(databasename)
+
+    cursor.execute("SELECT account_id FROM accounts WHERE username == (?) and password== (?)",(username,password))
+    id = cursor.fetchone()
+
+    conn.close()
+
+    if id != None:
+        id = id[0]
+
+    return id
+
 def getFolderPath(id,databasename)->str:
     """returns the FolderPath of the users folder"""
 
@@ -84,7 +98,6 @@ def getFolderPath(id,databasename)->str:
 
     cursor.execute("SELECT folderpath FROM folders WHERE account_id == (?)",(id,))
     folderPath = cursor.fetchone()
-
     if folderPath != None:
         folderPath = folderPath[0]
 

@@ -15,12 +15,12 @@ class Main():
         self.DatabasePath = "databases/userdata.db"
         
         #creating window
-        screenSize = self.GetScreenSize()
-        self.root.geometry(f"{screenSize[0]}x{screenSize[1]}+0+0")
+        self.screenSize = self.GetScreenSize()
+        self.root.geometry(f"{self.screenSize[0]}x{self.screenSize[1]}+0+0")
 
         #go to login screen
         self.login = LoginScreen(self)  
-        # self.login.setupLoginScreen
+        #self.login.setupLoginScreen()
 
         #create gallery class
         self.gallery = Gallery(self)

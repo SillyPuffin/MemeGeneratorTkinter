@@ -16,20 +16,20 @@ class Gallery():
         self.memeIcons = []
         self.id = None
 
-        self.Viewer = viewer.Viewer()
-
         self.main = main
         self.root = main.root
+
+        self.Viewer = viewer.Viewer(self)
 
     def openImageInViewer(self,name,index):
         """open the meme larger in a proper viewer"""
         self.frame.pack_forget()
-        self.Viewer.openImage(name, index, self.id)
+        self.Viewer.openImage(self.id, name, index)
         #loadtheimage in viewer
 
     def repackFrame(self):
         """repacks the forgotten main frame"""
-        self.frame.pack()
+        self.frame.pack(fill=tk.BOTH,expand=True)
 
     def createGalleryScreen(self,id):
         """create the gallery classes, instanciate the main frame and the scroll window for viewing your memes"""
@@ -84,11 +84,12 @@ class Gallery():
 
         if memeFolderPath:
             self.createMemeIcons(memeFolderPath)
-            self.packMemeIcons()
+            if self.memeIcons:
+                self.packMemeIcons()
     
     def createMemeIcons(self,Path):
         """Load all images in the users meme directory"""
-        iconSize = 150
+        iconSize = 250
 
         filenames = list(walk(Path))
         if filenames != []:
@@ -106,13 +107,24 @@ class Gallery():
                 newIcon = imageicon.ImageIcon(self,image,iconSize,index,item)
                 self.memeIcons.append(newIcon)
             
-    
     def packMemeIcons(self):
         """pack all the meme thumbnails to the scroll area"""
         maxWidth = max([icon.returnWidth() for icon in self.memeIcons])
-        print(self.memeIcons)
-        for icon in self.memeIcons:
-            icon.frame.pack()
+
+        maxColumns = (self.main.screenSize[0]-20) // maxWidth
+        
+
+        finished = False
+        r = 0
+        while not finished:
+            for col in range(maxColumns):
+                index = r*(maxColumns) + col
+                self.memeIcons[index].frame.grid(padx=(10,10),pady=10,row=r,column=col)
+
+                if index + 1 == len(self.memeIcons):
+                    finished = True
+                    break
+            r+=1
     
     ##logic
     def DestroyMainFrame(self):
@@ -123,6 +135,7 @@ class Gallery():
         """destroy the gallery frame and reopen the login screen"""
         self.main.currentAccount = None
         self.DestroyMainFrame()
+        self.memeIcons = []
         self.main.login.setupLoginScreen()
 
     def openEmptyImage(self):

@@ -4,6 +4,8 @@ import customtkinter as ctk
 from time import sleep
 from PIL import ImageTk, Image
 
+from pathlib import Path
+
 #my moduels
 from scripts import colours
 from scripts import database
@@ -199,6 +201,13 @@ class LoginScreen():
 
         if not database.isUsernameInAccounts(username,self.DatabasePath) and (username != "" and password != ""):
             database.addAccount(username,password, self.DatabasePath)
+
+            id = database.getAccountId(username,password, self.DatabasePath)
+
+            path = Path(database.getFolderPath(id, self.DatabasePath))
+
+            path.mkdir(parents=True, exist_ok=True)
+
             #alert if they succeed to create account then switch to login page
             label = ctk.CTkLabel(master=self.accountForm, text='Creating Account', font=("calibri",15),text_color='green')
             label.grid(row=7,column = 0, pady=(0,4))
@@ -237,7 +246,7 @@ class LoginScreen():
                 #tell the main class the id of the current account
                 self.main.currentAccount = id
                 self.DestroyMainFrame()
-
+                print(id)
                 #create the gallery view to load into
                 self.main.gallery.createGalleryScreen(id)
 
