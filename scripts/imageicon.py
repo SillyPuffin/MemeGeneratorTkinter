@@ -11,9 +11,9 @@ class ImageIcon():
         self.index = index
         self.fullname = name
         self.imagesize = imagesize
-        print(self.imagesize)
 
         self.maxTextWidth = 20
+        self.width = imagesize + 20
 
         if len(name) > self.maxTextWidth:
             tempname = name[0:self.maxTextWidth]
@@ -25,27 +25,23 @@ class ImageIcon():
         self.createBox()
     
     def createBox(self):
+        """create the elements of the meme icon"""
         self.frame = ctk.CTkFrame(master= self.gallery.scrollGalleryFrame,fg_color=colours.backgroundHighlight,border_color=colours.backgroundAccent,border_width=3,corner_radius=4)
 
         image = tk.Label(master=self.frame, image=self.image,bg=colours.backgroundHighlight,width=self.imagesize,height=self.imagesize)
         image.bind("<Button-1>",self.openImageInViewer)
 
         testfont = font.Font(family='calibri',size=15)
-        self.textLabel = tk.Label(master=self.frame, text=self.displayName, fg='white',bg=colours.backgroundHighlight, font=testfont)
+        textframe=tk.Frame(master=self.frame, width=self.imagesize, background=colours.backgroundHighlight, height=testfont.metrics('linespace'))
+        textframe.pack_propagate(False)
 
-        #calculate the max width of the box
-        sizeString = 'A'
-        sizeString *= self.maxTextWidth
-        print(sizeString)
-        self.width = max([self.imagesize+10,testfont.measure(sizeString)+10])
-        print(testfont.measure(sizeString)+10)
+        self.textLabel = tk.Label(master=textframe, text=self.displayName, fg='white',bg=colours.backgroundHighlight, font=testfont)
 
-        self.frame.configure(width=self.width)
-        self.frame.pack_propagate(False)
-        
+        image.pack(pady=(5,0),padx=(10,10))
 
-        image.pack(pady=5,padx=5)
-        self.textLabel.pack(pady=5,padx=5)
+        self.textLabel.pack(side=tk.LEFT,anchor='nw')
+
+        textframe.pack(pady=(0,5),padx=(10,10))
 
     def returnWidth(self):
         """returns the width of the frame of the icon"""
