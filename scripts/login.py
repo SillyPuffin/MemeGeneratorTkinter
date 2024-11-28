@@ -246,7 +246,6 @@ class LoginScreen():
                 #tell the main class the id of the current account
                 self.main.currentAccount = id
                 self.DestroyMainFrame()
-                print(id)
                 #create the gallery view to load into
                 self.main.gallery.createGalleryScreen(id)
 

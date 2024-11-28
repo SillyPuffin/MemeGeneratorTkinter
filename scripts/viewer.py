@@ -13,6 +13,7 @@ class Viewer():
         
         self.imagePad= 10
         self.buttonWidth = 20
+        self.topHeight = 0
 
         self.imagelabel = None
 
@@ -44,12 +45,19 @@ class Viewer():
         backButton = ctk.CTkButton(master=self.TopFrame, text='back',font=("calibri",25),hover_color=colours.buttonHover,fg_color=colours.button,command=self.backToGallery)
         backButton.pack(side=tk.RIGHT,padx=10,pady=10,anchor='ne')
 
+        self.TopFrame.update()
+        self.topHeight = backButton.winfo_reqheight() + 10*2 #used to calculate the height of the top bar
+
         #title in the center
         Title = ctk.CTkLabel(master=self.TopFrame, text_color=colours.Heading, font=('impact',50), text='Image Viewer')
         Title.place(relx=0.5,rely=0.5,anchor='center')
 
         self.gallery.root.update_idletasks()
         self.TopFrame.configure(height=Title.winfo_height()+10)
+
+        newHeight = Title.winfo_height()+10
+        if newHeight > self.topHeight:
+            self.topHeight = newHeight #if the height of the title +padding is bigger than the buttons + padding then use title
 
     def destroyImageFrame(self):
         if self.imagelabel != None:
@@ -62,8 +70,10 @@ class Viewer():
 
         self.index = index
         
-        windowHeight = self.gallery.main.screenSize[1]-self.TopFrame.winfo_height()
+        windowHeight = self.gallery.main.screenSize[1]-self.topHeight #get the height of the image dispaly area for correct sizing
         windowWidth = self.gallery.main.screenSize[0]
+
+        print(f'{windowWidth},{windowHeight}')
 
         imageHeight = windowHeight - self.imagePad*2
         imageWidth = windowWidth - self.imagePad*4 - self.buttonWidth * 2
