@@ -88,7 +88,7 @@ class Gallery():
     
     def createMemeIcons(self,Path):
         """Load all images in the users meme directory"""
-        iconSize = 100
+        iconSize = 150
 
         filenames = list(walk(Path))
         if filenames != []:
@@ -100,14 +100,18 @@ class Gallery():
             for index, item in enumerate(filenames):
                 image = Image.open(f"{Path}/{item}")
                 #resize the image to fit within the icon size
-                image.thumbnail((100,100))
+                image.thumbnail((iconSize,iconSize))
                 image = ImageTk.PhotoImage(image)
 
-                newIcon = imageicon.ImageIcon(self,image,index,item)
+                newIcon = imageicon.ImageIcon(self,image,iconSize,index,item)
                 self.memeIcons.append(newIcon)
+            
     
     def packMemeIcons(self):
         """pack all the meme thumbnails to the scroll area"""
+        maxWidth = max([icon.returnWidth() for icon in self.memeIcons])
+        print(maxWidth)
+
         for icon in self.memeIcons:
             icon.frame.pack(pady=5)
     
