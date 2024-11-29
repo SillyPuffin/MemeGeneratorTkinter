@@ -27,7 +27,7 @@ class Gallery():
         self.root = main.root
 
         self.Viewer = viewer.Viewer(self)
-
+    #creation of elements
     def openImageInViewer(self,name,index):
         """open the meme larger in a proper viewer"""
         if not self.pause:
@@ -79,6 +79,10 @@ class Gallery():
         logOut = ctk.CTkButton(master= self.TopFrame, text='Logout', font=('calibri',25),fg_color=colours.button,hover_color=colours.buttonHover, command=self.switchToLogIn)
         logOut.pack(side=tk.RIGHT, anchor='n', pady=10)
 
+        #deleteaccount
+        deleteaccount = ctk.CTkButton(master=self.TopFrame, text='Delete Account', font=('calibri',25),fg_color=colours.redButton, hover_color=colours.redButtonHover,command=self.tryDeleteAccount)
+        deleteaccount.pack(side=tk.RIGHT, anchor='n',pady=10,padx=10)
+
         #title in the center
         Title = ctk.CTkLabel(master=self.TopFrame, text_color=colours.Heading, font=('impact',70), text='Gallery')
         Title.place(relx=0.5,rely=0.5,anchor='center')
@@ -98,39 +102,6 @@ class Gallery():
             if self.memeIcons:
                 self.packMemeIcons()
     
-    def clearMemeIcons(self):
-        """clears all meme icons from the display and empties the list"""
-        for item in self.memeIcons:
-            item.frame.destroy()
-        self.memeIcons = []
-
-    def deleteAll(self):
-        """opens the diaglog box to confirm deleteAll and pauses the menus"""
-        if not self.pause:
-            self.pause = True
-            confirm = confirmbox.ConfirmBox('Are you sure?',self.frame,self.removeFiles,self.failDelete)
-        
-    def failDelete(self):
-        """unpauses if deleteAll is cancelled"""
-        self.pause= False
-    
-    def removeFiles(self):
-        """removes all files in the accounts image folder"""
-        database.deleteAllImages(database.getFolderPath(self.id, self.DatabasePath))
-        self.deleteNotification()
-        self.clearMemeIcons()        
-        self.pause = False
-    
-    def deleteNotification(self):
-        """little notifcation box pop-up to tell the user that they have deleted all their files"""
-        self.notiFrame = ctk.CTkFrame(master=self.frame, corner_radius=0,border_width=2, border_color=colours.backgroundAccent, fg_color=colours.backgroundHighlight)
-        notification = ctk.CTkLabel(master=self.notiFrame, text='Deleting...',text_color=colours.alertText, font = ('calibri',25))
-        notification.pack(padx=10,pady=7)
-        self.notiFrame.place(relx=0.5,rely=0.5,anchor='center')
-        self.root.update()
-        sleep(1)
-        self.notiFrame.destroy()
-
     def createMemeIcons(self,Path):
         """Load all images in the users meme directory"""
         iconSize = 250
@@ -169,6 +140,53 @@ class Gallery():
                     finished = True
                     break
             r+=1
+
+    #deleting things
+    def clearMemeIcons(self):
+        """clears all meme icons from the display and empties the list"""
+        for item in self.memeIcons:
+            item.frame.destroy()
+        self.memeIcons = []
+
+    def tryDeleteAccount(self):
+        if not self.pause:
+            self.pause = True
+            confirm = confirmbox.ConfirmBox('Are you Sure?', self.frame, self.deleteAccount, self.unPause)
+
+    def deleteAccount(self):
+        "deletes the account currently active"
+        database.deleteAllImages(database.getFolderPath(self.id, self.DatabasePath))
+        database.deleteAccount(self.id, self.DatabasePath)
+        self.deleteNotification()
+        self.switchToLogIn()
+        self.pause = False
+
+    def deleteAll(self):
+        """opens the diaglog box to confirm deleteAll and pauses the menus"""
+        if not self.pause:
+            self.pause = True
+            confirm = confirmbox.ConfirmBox('Are you sure?',self.frame,self.removeFiles,self.unPause)
+        
+    def unPause(self):
+        """unpauses if confirmbox is cancelled"""
+        self.pause= False
+    
+    def removeFiles(self):
+        """removes all files in the accounts image folder"""
+        database.deleteAllImages(database.getFolderPath(self.id, self.DatabasePath))
+        self.deleteNotification()
+        self.clearMemeIcons()        
+        self.pause = False
+    
+    def deleteNotification(self):
+        """little notifcation box pop-up to tell the user that they have deleted all their files"""
+        self.notiFrame = ctk.CTkFrame(master=self.frame, corner_radius=0,border_width=2, border_color=colours.backgroundAccent, fg_color=colours.backgroundHighlight)
+        notification = ctk.CTkLabel(master=self.notiFrame, text='Deleting...',text_color=colours.alertText, font = ('calibri',25))
+        notification.pack(padx=10,pady=7)
+        self.notiFrame.place(relx=0.5,rely=0.5,anchor='center')
+        self.root.update()
+        sleep(1)
+        self.notiFrame.destroy()
     
     ##logic
     def DestroyMainFrame(self):

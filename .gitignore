@@ -1,8 +1,7 @@
-images/
-memes/
+Memes/*
 *.code-workspace
 databases/
-recyclebin/
+recyclebin/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

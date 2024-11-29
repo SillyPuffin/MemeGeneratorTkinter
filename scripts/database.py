@@ -80,6 +80,15 @@ def addAccount(username,password,databasename):
     conn.commit()
     conn.close()
 
+def deleteAccount(id, databasename):
+    """delete the account corresponding to the id"""
+    conn, cursor = CreateCursor(databasename)
+
+    cursor.execute("DELETE FROM accounts WHERE account_id = (?)",(id,))
+    
+    conn.commit()
+    conn.close()
+
 def getAccountId(username,password, databasename)->int:
     """returns the account id of a given username and password"""
     conn,cursor = CreateCursor(databasename)
