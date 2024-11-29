@@ -4,6 +4,7 @@ from .gallery import *
 from .editor import * 
 from .viewer import *
 from .imageicon import *
+from .confirmbox import ConfirmBox
 
 
 from .colours import *

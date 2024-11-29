@@ -87,6 +87,13 @@ class Gallery():
             if self.memeIcons:
                 self.packMemeIcons()
     
+    def clearMemeIcons(self):
+        """clears all meme icons from the display and empties the list"""
+        for item in self.memeIcons:
+            print("clearing")
+            item.frame.destroy()
+        self.memeIcons = []
+
     def createMemeIcons(self,Path):
         """Load all images in the users meme directory"""
         iconSize = 250
@@ -97,7 +104,7 @@ class Gallery():
 
         if len(filenames) != len(self.memeIcons):
             #add the new icons if its changed
-            self.memeIcons = []
+            self.clearMemeIcons()
             for index, item in enumerate(filenames):
                 image = Image.open(f"{Path}/{item}")
                 #resize the image to fit within the icon size

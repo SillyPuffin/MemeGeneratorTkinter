@@ -1,14 +1,18 @@
 import tkinter as tk
 import customtkinter as ctk
+from os import remove
+import os.path
 
 from PIL import ImageTk, Image
 
 from scripts import database
 from scripts import colours
+from scripts import confirmbox
 
 class Viewer():
     def __init__(self, gallery) -> None:
         self.gallery = gallery
+        self.pause= False
         self.index = None
         
         self.imagePad= 10
@@ -107,22 +111,24 @@ class Viewer():
         self.imagelabel.bind("<Button-3>", self.openPreviousImage)
 
     def openNextImage(self, event=None):
-        self.index += 1
+        if not self.pause:
+            self.index += 1
 
-        if self.index == len(self.gallery.memeIcons):
-            self.index = 0
+            if self.index == len(self.gallery.memeIcons):
+                self.index = 0
 
-        self.setNewImage()
+            self.setNewImage()
 
     def openPreviousImage(self,event=None):
-        self.index -= 1
+        if not self.pause:
+            self.index -= 1
 
-        if self.index < 0:
-            self.index = len(self.gallery.memeIcons)-1
             if self.index < 0:
-                self.index = 0
-            
-        self.setNewImage()
+                self.index = len(self.gallery.memeIcons)-1
+                if self.index < 0:
+                    self.index = 0
+                
+            self.setNewImage()
 
     def setNewImage(self):
         newPath = self.gallery.memeIcons[self.index].fullname
@@ -135,9 +141,24 @@ class Viewer():
 
         self.imagelabel.configure(image=self.meme)
 
+    def removeImageFile(self):
+        name = self.gallery.memeIcons[self.index].fullname
+        prefix = database.getFolderPath(self.id, self.gallery.DatabasePath)
+        remove(os.path.join(prefix,name))
+
+        self.gallery.createMemeIcons(database.getFolderPath(self.id,self.gallery.DatabasePath))
+        if self.gallery.memeIcons:
+            self.gallery.packMemeIcons()
+        self.pause = False
+
+    def failDelete(self):
+        self.pause = False
+
     def deleteImage(self):
-        pass
+        confirm = confirmbox.ConfirmBox('Are you sure?',self.frame,self.removeImageFile,self.failDelete)
+        self.pause = True
 
     def backToGallery(self):
-        self.frame.pack_forget()
-        self.gallery.repackFrame()
+        if not self.pause:
+            self.frame.pack_forget()
+            self.gallery.repackFrame()
