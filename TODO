@@ -1,4 +1,11 @@
-get a deleting indicator to pop up
-get the gallery icons to get properly removed when deleting
+
+
+add a delete account button - reuse delete all function as well
+comment all the new functions
+    -viewer
+    -confirmbox
+    -delete all
+    -delete account
+
 add share to copy image to other accounts
 delete accounts and clear meme folder

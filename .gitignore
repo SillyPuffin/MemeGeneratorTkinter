@@ -2,6 +2,7 @@ images/
 memes/
 *.code-workspace
 databases/
+recyclebin/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

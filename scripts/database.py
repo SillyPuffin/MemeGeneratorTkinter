@@ -1,4 +1,7 @@
 import sqlite3
+import shutil
+from os import walk
+from os import path
 
 def ResetDatabases(databasename):
     #delete all tables
@@ -104,3 +107,39 @@ def getFolderPath(id,databasename)->str:
     conn.close()
 
     return folderPath
+
+def moveFile(filename, src_path, dst_path):
+    """move a given filename from a source to a destination, renaming if one already exists"""
+    suffix = filename[-4:]
+    cutname = filename[0:-4]
+    finalname = filename
+    count = 1
+    while path.exists(dst_path + finalname):
+        finalname = f"{cutname} ({count}){suffix}"
+        count+=1
+
+    dest_path = dst_path + finalname
+
+    shutil.move(src_path, dest_path)
+
+def deleteImage(image_path, id, databasename):
+    """remove the selected image and place it in the bin folder"""
+
+    prefix = getFolderPath(id,databasename)
+
+    src_path = prefix + "/" + image_path
+    dst_path = "recyclebin/"
+
+    moveFile(image_path, src_path, dst_path)
+
+def deleteAllImages(image_dir):
+    """move all the images in a directory to the bin"""
+    files = list(walk(image_dir))
+    if files:
+        filenames = files[0][2]
+        for name in filenames:
+            fullpath = image_dir +"/" +  name
+            dst_path = "recyclebin/"
+
+            moveFile(name, fullpath, dst_path)
+

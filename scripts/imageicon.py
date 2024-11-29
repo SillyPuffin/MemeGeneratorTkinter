@@ -60,10 +60,12 @@ class ImageIcon():
 
     def widenBorder(self,event):
         """doubles the border size"""
-        borderwidth = self.frame._border_width
-        self.frame.configure(border_width=int(borderwidth*2))
+        if not self.gallery.pause:
+            borderwidth = self.frame._border_width
+            self.frame.configure(border_width=int(borderwidth*2))
 
     def shrinkBorder(self,event):
         """halfs the border size"""
-        borderwidth = self.frame._border_width
-        self.frame.configure(border_width=int(borderwidth/2))
+        if not self.gallery.pause:
+            borderwidth = self.frame._border_width
+            self.frame.configure(border_width=int(borderwidth/2))

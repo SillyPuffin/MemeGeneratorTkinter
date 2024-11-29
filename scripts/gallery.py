@@ -1,12 +1,17 @@
 import tkinter as tk
 import customtkinter as ctk
+
 from PIL import ImageTk, Image
+
 from os import walk
+
+from time import sleep
 
 from scripts import database
 from scripts import viewer
 from scripts import imageicon
 from scripts import colours
+from scripts import confirmbox
 
 
 class Gallery():
@@ -16,6 +21,8 @@ class Gallery():
         self.memeIcons = []
         self.id = None
 
+        self.pause = False
+
         self.main = main
         self.root = main.root
 
@@ -23,9 +30,9 @@ class Gallery():
 
     def openImageInViewer(self,name,index):
         """open the meme larger in a proper viewer"""
-        self.frame.pack_forget()
-        self.Viewer.openImage(self.id, name, index)
-        #loadtheimage in viewer
+        if not self.pause:
+            self.frame.pack_forget()
+            self.Viewer.openImage(self.id, name, index) #loadtheimage in viewer
 
     def repackFrame(self):
         """repacks the forgotten main frame"""
@@ -60,6 +67,10 @@ class Gallery():
         createNew = ctk.CTkButton(master= self.TopFrame, text='Create Meme', font=('calibri',25),fg_color=colours.button,hover_color=colours.buttonHover,command=self.openEmptyImage)
         createNew.pack(side=tk.LEFT, anchor='n' ,padx=10,pady=10)
 
+        #delete all images
+        deleteAll = ctk.CTkButton(master=self.TopFrame, text='Delete All', font=('calibri',25), fg_color=colours.redButton, hover_color=colours.redButtonHover, command=self.deleteAll)
+        deleteAll.pack(side=tk.LEFT, anchor='n',padx=10,pady=10)
+
         #button for close
         CloseApp = ctk.CTkButton(master= self.TopFrame, text='Exit', font=('calibri',25),fg_color=colours.button,hover_color=colours.buttonHover,command=self.main.closeApp)
         CloseApp.pack(side=tk.RIGHT, anchor='n' ,padx=10,pady=10)
@@ -92,6 +103,33 @@ class Gallery():
         for item in self.memeIcons:
             item.frame.destroy()
         self.memeIcons = []
+
+    def deleteAll(self):
+        """opens the diaglog box to confirm deleteAll and pauses the menus"""
+        if not self.pause:
+            self.pause = True
+            confirm = confirmbox.ConfirmBox('Are you sure?',self.frame,self.removeFiles,self.failDelete)
+        
+    def failDelete(self):
+        """unpauses if deleteAll is cancelled"""
+        self.pause= False
+    
+    def removeFiles(self):
+        """removes all files in the accounts image folder"""
+        database.deleteAllImages(database.getFolderPath(self.id, self.DatabasePath))
+        self.deleteNotification()
+        self.clearMemeIcons()        
+        self.pause = False
+    
+    def deleteNotification(self):
+        """little notifcation box pop-up to tell the user that they have deleted all their files"""
+        self.notiFrame = ctk.CTkFrame(master=self.frame, corner_radius=0,border_width=2, border_color=colours.backgroundAccent, fg_color=colours.backgroundHighlight)
+        notification = ctk.CTkLabel(master=self.notiFrame, text='Deleting...',text_color=colours.alertText, font = ('calibri',25))
+        notification.pack(padx=10,pady=7)
+        self.notiFrame.place(relx=0.5,rely=0.5,anchor='center')
+        self.root.update()
+        sleep(1)
+        self.notiFrame.destroy()
 
     def createMemeIcons(self,Path):
         """Load all images in the users meme directory"""
@@ -145,5 +183,6 @@ class Gallery():
         self.main.login.setupLoginScreen()
 
     def openEmptyImage(self):
-        self.frame.destroy()
-        self.main.editor.loadImage()
+        if not self.pause:
+            self.frame.destroy()
+            self.main.editor.loadImage()

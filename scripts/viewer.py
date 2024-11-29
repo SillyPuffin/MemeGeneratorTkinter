@@ -146,19 +146,21 @@ class Viewer():
 
     def removeImageFile(self):
         name = self.gallery.memeIcons[self.index].fullname
-        prefix = database.getFolderPath(self.id, self.gallery.DatabasePath)
-        remove(os.path.join(prefix,name))
+        database.deleteImage(name,self.id,self.gallery.DatabasePath)
 
         self.gallery.createMemeIcons(database.getFolderPath(self.id,self.gallery.DatabasePath))
         if self.gallery.memeIcons:
             self.gallery.packMemeIcons()
+
             self.deleteNotification()
+
             if self.index > len(self.gallery.memeIcons)-1:
                 self.index-=1
 
             self.setNewImage()
         else:
             self.deleteNotification()
+
             self.destroyImageFrame()
 
         self.pause = False
@@ -176,8 +178,9 @@ class Viewer():
         self.notiFrame.destroy()
 
     def deleteImage(self):
-        confirm = confirmbox.ConfirmBox('Are you sure?',self.frame,self.removeImageFile,self.failDelete)
-        self.pause = True
+        if not self.pause:
+            confirm = confirmbox.ConfirmBox('Are you sure?',self.frame,self.removeImageFile,self.failDelete)
+            self.pause = True
 
     def backToGallery(self):
         if not self.pause:
