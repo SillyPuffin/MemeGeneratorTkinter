@@ -4,6 +4,9 @@ backgroundHighlight = "#373737"
 backgroundAccent = "#7f7f7f"
 
 
+redButton = '#f71d24'
+redButtonHover = '#ce181e'
+
 button = '#32984b'
 buttonHover = '#287a3c'
 

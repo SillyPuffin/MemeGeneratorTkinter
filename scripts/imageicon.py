@@ -40,6 +40,9 @@ class ImageIcon():
         imageLabel.pack(padx=pad,pady=(pad,pad))
         imageLabel.bind("<Button-1>",self.openImageInViewer)
 
+        imageLabel.bind("<Enter>",self.widenBorder)
+        imageLabel.bind("<Leave>",self.shrinkBorder)
+
         nameLabel = tk.Label(master=self.frame, text=displayName, background=colours.backgroundHighlight, foreground='white',font=calibriFont)
 
         topLeftofLabel = bordersize + pad + self.imagesize + pad
@@ -54,3 +57,13 @@ class ImageIcon():
     def openImageInViewer(self,event):
         """executes the gallery function to open the depicted image in the viewer window"""
         self.gallery.openImageInViewer(self.fullname, self.index)
+
+    def widenBorder(self,event):
+        """doubles the border size"""
+        borderwidth = self.frame._border_width
+        self.frame.configure(border_width=int(borderwidth*2))
+
+    def shrinkBorder(self,event):
+        """halfs the border size"""
+        borderwidth = self.frame._border_width
+        self.frame.configure(border_width=int(borderwidth/2))
