@@ -1,5 +1,8 @@
 import tkinter as tk
 import customtkinter as ctk
+
+from time import sleep
+
 from os import remove
 import os.path
 
@@ -149,10 +152,28 @@ class Viewer():
         self.gallery.createMemeIcons(database.getFolderPath(self.id,self.gallery.DatabasePath))
         if self.gallery.memeIcons:
             self.gallery.packMemeIcons()
+            self.deleteNotification()
+            if self.index > len(self.gallery.memeIcons)-1:
+                self.index-=1
+
+            self.setNewImage()
+        else:
+            self.deleteNotification()
+            self.destroyImageFrame()
+
         self.pause = False
 
     def failDelete(self):
         self.pause = False
+
+    def deleteNotification(self):
+        self.notiFrame = ctk.CTkFrame(master=self.frame, corner_radius=0,border_width=2, border_color=colours.backgroundAccent, fg_color=colours.backgroundHighlight)
+        notification = ctk.CTkLabel(master=self.notiFrame, text='Deleting...',text_color=colours.alertText, font = ('calibri',25))
+        notification.pack(padx=10,pady=7)
+        self.notiFrame.place(relx=0.5,rely=0.5,anchor='center')
+        self.gallery.root.update()
+        sleep(1)
+        self.notiFrame.destroy()
 
     def deleteImage(self):
         confirm = confirmbox.ConfirmBox('Are you sure?',self.frame,self.removeImageFile,self.failDelete)

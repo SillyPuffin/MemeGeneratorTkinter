@@ -90,7 +90,6 @@ class Gallery():
     def clearMemeIcons(self):
         """clears all meme icons from the display and empties the list"""
         for item in self.memeIcons:
-            print("clearing")
             item.frame.destroy()
         self.memeIcons = []
 
