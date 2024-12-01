@@ -28,17 +28,21 @@ class Viewer():
         self.createViewer()
 
     def createMainFrame(self):
+        """instantiate the main frame for all elements of the viewer"""
         self.frame= tk.Frame(master=self.gallery.root, background=colours.backgroundColour)
        
     def packMainFrame(self):
+        """packs the main frame again but doesn't delete the old one"""
         self.destroyImageFrame()
         self.frame.pack(expand=True,fill=tk.BOTH)
 
     def createViewer(self):
+        """generates the top bar and the bottom buttons"""
         self.createTopBar()
         self.createImageDisplay()
 
     def createImageDisplay(self):
+        """creates the frame where the image and buttons are displayed"""
         self.ImageDisplayFrame = tk.Frame(master=self.frame, background=colours.backgroundColour)
         self.ImageDisplayFrame.pack(fill=tk.BOTH, expand=True)
 
@@ -83,11 +87,13 @@ class Viewer():
             self.topHeight = newHeight #if the height of the title +padding is bigger than the buttons + padding then use title
 
     def destroyImageFrame(self):
+        """deletes the label containing the image"""
         if self.imagelabel != None:
             self.imagelabel.destroy()
             self.imagelabel = None
 
     def openImage(self,id,path,index):
+        """opens the image specified """
         self.id = id
         self.packMainFrame()
 
@@ -114,6 +120,7 @@ class Viewer():
         self.imagelabel.bind("<Button-3>", self.openPreviousImage)
 
     def openNextImage(self, event=None):
+        """moves to the next image in the directory"""
         if not self.pause:
             self.index += 1
 
@@ -123,6 +130,7 @@ class Viewer():
             self.setNewImage()
 
     def openPreviousImage(self,event=None):
+        """moves to the last image in the directory"""
         if not self.pause:
             self.index -= 1
 
@@ -134,6 +142,7 @@ class Viewer():
             self.setNewImage()
 
     def setNewImage(self):
+        """swaps the image of an existing label to the current index"""
         newPath = self.gallery.memeIcons[self.index].fullname
         prefix = database.getFolderPath(self.id, self.gallery.DatabasePath)
         fullPath = prefix + "/" + newPath
@@ -145,6 +154,7 @@ class Viewer():
         self.imagelabel.configure(image=self.meme)
 
     def removeImageFile(self):
+        """deletes the currently viewed image from directory and updates the image label"""
         name = self.gallery.memeIcons[self.index].fullname
         database.deleteImage(name,self.id,self.gallery.DatabasePath)
 
@@ -166,9 +176,11 @@ class Viewer():
         self.pause = False
 
     def failDelete(self):
+        """unpauses the menus"""
         self.pause = False
 
     def deleteNotification(self):
+        """little popup box to show that the image has been deleted"""
         self.notiFrame = ctk.CTkFrame(master=self.frame, corner_radius=0,border_width=2, border_color=colours.backgroundAccent, fg_color=colours.backgroundHighlight)
         notification = ctk.CTkLabel(master=self.notiFrame, text='Deleting...',text_color=colours.alertText, font = ('calibri',25))
         notification.pack(padx=10,pady=7)
@@ -178,11 +190,13 @@ class Viewer():
         self.notiFrame.destroy()
 
     def deleteImage(self):
+        """creates the confirm box to delete the current image"""
         if not self.pause:
             confirm = confirmbox.ConfirmBox('Are you sure?',self.frame,self.removeImageFile,self.failDelete)
             self.pause = True
 
     def backToGallery(self):
+        """unpack the main frame and reload the gallery"""
         if not self.pause:
             self.frame.pack_forget()
             self.gallery.repackFrame()

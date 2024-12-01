@@ -125,16 +125,15 @@ class Gallery():
     def packMemeIcons(self):
         """pack all the meme thumbnails to the scroll area"""
         maxWidth = max([icon.returnWidth() for icon in self.memeIcons])
-
         maxColumns = (self.main.screenSize[0]-20) // maxWidth
-        
-
+    
         finished = False
         r = 0
         while not finished:
             for col in range(maxColumns):
                 index = r*(maxColumns) + col
                 self.memeIcons[index].frame.grid(padx=(10,10),pady=10,row=r,column=col)
+                self.root.update()
 
                 if index + 1 == len(self.memeIcons):
                     finished = True
@@ -201,6 +200,7 @@ class Gallery():
         self.main.login.setupLoginScreen()
 
     def openEmptyImage(self):
+        """open the editor with nothing loaded"""
         if not self.pause:
             self.frame.destroy()
             self.main.editor.loadImage()
