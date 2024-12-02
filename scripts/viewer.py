@@ -11,6 +11,7 @@ from PIL import ImageTk, Image
 from scripts import database
 from scripts import colours
 from scripts import confirmbox
+from scripts import sharer
 
 class Viewer():
     def __init__(self, gallery) -> None:
@@ -26,6 +27,9 @@ class Viewer():
 
         self.createMainFrame()
         self.createViewer()
+
+        self.sharer = sharer.Sharer(self)
+
 
     def createMainFrame(self):
         """instantiate the main frame for all elements of the viewer"""
@@ -95,6 +99,8 @@ class Viewer():
     def openImage(self,id,path,index):
         """opens the image specified """
         self.id = id
+        self.sharer.set_id(self.id)
+        self.sharer.openSharer()
         self.packMainFrame()
 
         self.index = index
@@ -175,7 +181,11 @@ class Viewer():
 
         self.pause = False
 
-    def failDelete(self):
+    def Pause(self):
+        """pauses the menus"""
+        self.pause = True
+
+    def unpause(self):
         """unpauses the menus"""
         self.pause = False
 
@@ -192,7 +202,7 @@ class Viewer():
     def deleteImage(self):
         """creates the confirm box to delete the current image"""
         if not self.pause:
-            confirm = confirmbox.ConfirmBox('Are you sure?',self.frame,self.removeImageFile,self.failDelete)
+            confirm = confirmbox.ConfirmBox('Are you sure?',self.frame,self.removeImageFile,self.unpause)
             self.pause = True
 
     def backToGallery(self):

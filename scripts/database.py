@@ -152,3 +152,12 @@ def deleteAllImages(image_dir):
 
             moveFile(name, fullpath, dst_path)
 
+def getAllAccounts(id, databasename):
+    """return a list of all accounts as the username and id in a tuple except the id passed in"""
+    conn, cursor = CreateCursor(databasename)
+
+    cursor.execute("SELECT account_id, username FROM accounts WHERE account_id != (?)",(id,))
+    accounts = cursor.fetchall()
+    conn.close()
+
+    return accounts

@@ -3,7 +3,6 @@ backgroundColour = "#1f1f23"
 backgroundHighlight = "#373737"
 backgroundAccent = "#7f7f7f"
 
-
 redButton = '#bf151a'
 redButtonHover = '#a3181d'
 
