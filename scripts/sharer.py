@@ -1,6 +1,8 @@
 import tkinter as tk
 import customtkinter as ctk
 
+from PIL import Image
+
 from scripts import usericon
 from scripts import colours
 from scripts import database
@@ -16,7 +18,6 @@ class Sharer():
 
         self.id = None
 
-        self.createMainFrame()
 
     def set_id(self, id):
         """sets the id and then updates the shareable accounts acorrdingly"""
@@ -28,18 +29,43 @@ class Sharer():
 
     def createMainFrame(self):
         """create the main frame"""
-        self.frame = ctk.CTkScrollableFrame(master=self.masterFrame, fg_color=colours.backgroundHighlight, border_color=colours.backgroundAccent,border_width=2,corner_radius=0, height=600)
+        self.pad = 5
+        borderwidth = 2
+        self.boxmaxwidth = 200
+        self.screenmaxwidth = self.boxmaxwidth + borderwidth*2  + self.pad*2
+        height = 350
+
+        self.frame = ctk.CTkFrame(master=self.masterFrame, fg_color=colours.backgroundColour, border_color=colours.backgroundAccent,border_width=borderwidth,corner_radius=0, height=height,width=self.screenmaxwidth)
         self.frame.pack_propagate(False)
+
+        self.topframe = ctk.CTkFrame(master=self.frame,fg_color=colours.backgroundHighlight, border_color=colours.backgroundAccent,border_width=borderwidth,corner_radius=0,width=self.screenmaxwidth)
+
+        self.exitIcon = ctk.CTkImage(Image.open('Graphics/cross.png'),None,(24,24))
+
+        self.backButton = ctk.CTkButton(master=self.topframe, fg_color=colours.backgroundHighlight, hover_color=colours.darkbutton,text='', image=self.exitIcon, width=1, command=self.exitSharer)
+        self.backButton.pack(side=tk.RIGHT, padx=self.pad,pady=self.pad)
+
+        self.sharetitle = tk.Label(master=self.topframe, font=('calibri',18),fg='white', text='Share To?',bg=colours.backgroundHighlight)
+        self.sharetitle.pack(side=tk.LEFT,padx=(self.pad,self.pad))
+
+        self.topframe.pack(side=tk.TOP,fill = tk.X)
+
+        self.scrollFrame = ctk.CTkScrollableFrame(master=self.frame, fg_color=colours.backgroundColour, corner_radius=0)
+        self.scrollFrame.pack(fill=tk.Y,expand=True,padx=borderwidth,pady=(0,borderwidth))
+        
     
     def openSharer(self):
+        """packs the sharer frame and pauses menus"""
         self.frame.place(relx=0.5,rely=0.5,anchor='center')
         self.viewer.Pause()
 
     def closeSharer(self):
-        self.frame.pack_forget()
+        """un packs the sharer"""
+        self.frame.place_forget()
     
     def exitSharer(self):
-        self.frame.pack_forget()
+        "unpacks and unpauses the menus"
+        self.closeSharer()
         self.viewer.unpause()
 
     def clearIcons(self):
@@ -54,19 +80,21 @@ class Sharer():
         if accounts:
 
             for account in accounts:
-                newIcon = usericon.UserIcon(self.frame,self.viewer, account[0], account[1])
+                newIcon = usericon.UserIcon(self.scrollFrame,self, account[0], account[1],self.boxmaxwidth)
                 self.icons.append(newIcon)
 
     def packIcons(self):
         """pack all of sharers user icons"""
         for icon in self.icons:
-            icon.frame.pack(pady=7,padx=7, side=tk.TOP)
+            icon.frame.pack(pady=self.pad,padx=self.pad)
 
     def copyImage(self):
         """copy the image from the current account to the dst account"""
+        #copy notification
+        self.viewer.unpause()
         pass
 
-
-    def confirmSharer(self):
+    def confirmShare(self,event):
         """create the confirm box for sharing the image"""
-        confirm = confirmbox.ConfirmBox('Do you want to copy This?', self.masterFrame, self.copyImage, self.openSharer)
+        self.closeSharer()
+        self.confirm = confirmbox.ConfirmBox('Do you want to copy This?', self.masterFrame, self.copyImage, self.openSharer)

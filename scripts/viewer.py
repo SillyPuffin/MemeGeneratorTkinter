@@ -26,11 +26,13 @@ class Viewer():
         self.imagelabel = None
 
         self.createMainFrame()
-        self.createViewer()
 
         self.sharer = sharer.Sharer(self)
 
-
+        self.createViewer()
+        self.sharer.createMainFrame()#dont know why but i have to put this after create viewer
+        
+        
     def createMainFrame(self):
         """instantiate the main frame for all elements of the viewer"""
         self.frame= tk.Frame(master=self.gallery.root, background=colours.backgroundColour)
@@ -74,7 +76,10 @@ class Viewer():
         deleteButton = ctk.CTkButton(master=self.TopFrame, text='Delete', font=('calibri',25),command=self.deleteImage,fg_color=colours.redButton,hover_color=colours.redButtonHover)
         deleteButton.pack(side=tk.LEFT, padx=10,pady=10, anchor='nw')
 
-        #share
+        #share button
+        self.shareButton = ctk.CTkButton(master=self.TopFrame, text='Share',font=("calibri",25),hover_color=colours.buttonHover,fg_color=colours.button,command=self.sharer.openSharer)
+        self.shareButton.pack(side=tk.LEFT,padx=10,pady=10,anchor='nw')
+ 
 
         self.TopFrame.update()
         self.topHeight = backButton.winfo_reqheight() + 10*2 #used to calculate the height of the top bar
@@ -100,7 +105,6 @@ class Viewer():
         """opens the image specified """
         self.id = id
         self.sharer.set_id(self.id)
-        self.sharer.openSharer()
         self.packMainFrame()
 
         self.index = index
