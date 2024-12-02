@@ -18,7 +18,7 @@ class UserIcon():
         self.createBox()
 
     def createBox(self):
-        
+        """creates all the elements of each box"""
         calibriFont = font.Font(family='calibri', size = 20)
 
         #get the string that fits on the image
