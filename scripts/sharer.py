@@ -97,9 +97,14 @@ class Sharer():
     def copyImage(self):
         """copy the image from the current account to the dst account"""
         #copy notification
+        filename = self.imagetoshare
+        folderpath = database.getFolderPath(self.id, self.DatabasePath) + '/' + filename
+        dst_folderpath = database.getFolderPath(self.id_dst, self.DatabasePath)
+
+        database.copyFile(filename, folderpath, dst_folderpath)
+
         self.shareNotification()
         self.viewer.unpause()
-        pass
 
     def confirmShare(self,id_destination):
         """create the confirm box for sharing the image"""

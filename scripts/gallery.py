@@ -3,7 +3,7 @@ import customtkinter as ctk
 
 from PIL import ImageTk, Image
 
-from os import walk
+from os import walk, path, mkdir
 
 from time import sleep
 
@@ -105,6 +105,9 @@ class Gallery():
     def createMemeIcons(self,Path):
         """Load all images in the users meme directory"""
         iconSize = 250
+
+        if not path.exists(Path):
+            mkdir(Path)
 
         filenames = list(walk(Path))
         if filenames != []:

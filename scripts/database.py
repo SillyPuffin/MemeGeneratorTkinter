@@ -84,7 +84,18 @@ def deleteAccount(id, databasename):
     """delete the account corresponding to the id"""
     conn, cursor = CreateCursor(databasename)
 
-    cursor.execute("DELETE FROM accounts WHERE account_id = (?)",(id,))
+    cursor.execute("SELECT folderpath FROM folders WHERE account_id == (?)",(id,))
+    foldername = cursor.fetchone()
+    foldername = foldername[0]
+
+    try:
+        shutil.rmtree(foldername)
+    except FileNotFoundError:
+        print(f"file not found {foldername}")
+    except Exception as e:
+        print(f"error deleteing account {id}")
+
+    cursor.execute("DELETE FROM accounts WHERE account_id == (?)",(id,))
     
     conn.commit()
     conn.close()
@@ -130,6 +141,21 @@ def moveFile(filename, src_path, dst_path):
     dest_path = dst_path + finalname
 
     shutil.move(src_path, dest_path)
+
+def copyFile(filename, src_path, dst_path):
+    """copy the file from the source path to the destination path"""
+    suffix = filename[-4:]
+    cutname = filename[0:-4]
+    finalname = filename
+    count = 1
+
+    while path.exists(dst_path + finalname):
+        finalname = f"{cutname} ({count}){suffix}"
+        count+=1
+
+    dest_path = dst_path +"/" + finalname
+
+    shutil.copy(src_path, dest_path)
 
 def deleteImage(image_path, id, databasename):
     """remove the selected image and place it in the bin folder"""
