@@ -3,6 +3,8 @@ import customtkinter as ctk
 
 from PIL import Image
 
+from time import sleep
+
 from scripts import usericon
 from scripts import colours
 from scripts import database
@@ -16,6 +18,7 @@ class Sharer():
         self.DatabasePath = self.viewer.gallery.DatabasePath
         self.icons = []
 
+        self.imagetoshare = None
         self.id = None
 
 
@@ -26,6 +29,9 @@ class Sharer():
         self.createIcons()
         self.packIcons()
 
+    def set_image_name(self,name):
+        """sets the path of the image that will be shared"""
+        self.imagetoshare = name
 
     def createMainFrame(self):
         """create the main frame"""
@@ -91,10 +97,22 @@ class Sharer():
     def copyImage(self):
         """copy the image from the current account to the dst account"""
         #copy notification
+        self.shareNotification()
         self.viewer.unpause()
         pass
 
-    def confirmShare(self,event):
+    def confirmShare(self,id_destination):
         """create the confirm box for sharing the image"""
         self.closeSharer()
+        self.id_dst = id_destination
         self.confirm = confirmbox.ConfirmBox('Do you want to copy This?', self.masterFrame, self.copyImage, self.openSharer)
+
+    def shareNotification(self):
+        """little popup box to show that the image has been shared"""
+        self.notiFrame = ctk.CTkFrame(master=self.viewer.frame, corner_radius=0,border_width=2, border_color=colours.backgroundAccent, fg_color=colours.backgroundHighlight)
+        notification = ctk.CTkLabel(master=self.notiFrame, text='Sharing...',text_color=colours.successText, font = ('calibri',25))
+        notification.pack(padx=10,pady=7)
+        self.notiFrame.place(relx=0.5,rely=0.5,anchor='center')
+        self.viewer.gallery.root.update()
+        sleep(1)
+        self.notiFrame.destroy()

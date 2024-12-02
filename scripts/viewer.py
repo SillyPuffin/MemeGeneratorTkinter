@@ -105,6 +105,7 @@ class Viewer():
         """opens the image specified """
         self.id = id
         self.sharer.set_id(self.id)
+        self.sharer.set_image_name(path)
         self.packMainFrame()
 
         self.index = index
@@ -154,6 +155,7 @@ class Viewer():
     def setNewImage(self):
         """swaps the image of an existing label to the current index"""
         newPath = self.gallery.memeIcons[self.index].fullname
+        self.sharer.set_image_name(newPath)
         prefix = database.getFolderPath(self.id, self.gallery.DatabasePath)
         fullPath = prefix + "/" + newPath
 

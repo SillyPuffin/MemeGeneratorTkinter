@@ -32,6 +32,10 @@ class UserIcon():
         self.label = tk.Label(master=self.frame, text = displayName, font = calibriFont,background=colours.backgroundHighlight,fg='white')
         self.label.pack(side=tk.LEFT,padx=self.pad,pady=self.pad)
 
-        self.label.bind('<Button-1>', self.sharer.confirmShare)
+        self.label.bind('<Button-1>', self.confirmShare)
+        
+    def confirmShare(self,event):
+        """executes the sharer's confirm share function passing the id of the dst account"""
+        self.sharer.confirmShare(self.id)
 
         
