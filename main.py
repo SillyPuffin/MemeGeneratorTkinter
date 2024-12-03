@@ -23,7 +23,7 @@ class Main():
 
         #create gallery class
         self.gallery = Gallery(self)
-        self.gallery.createGalleryScreen(1)
+        self.gallery.createGalleryScreen(2)
 
         #create the editor class
         self.editor = Editor(self)
