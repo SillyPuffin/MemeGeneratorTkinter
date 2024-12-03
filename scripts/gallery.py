@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import filedialog
 import customtkinter as ctk
 
 from PIL import ImageTk, Image
@@ -67,6 +68,10 @@ class Gallery():
         createNew = ctk.CTkButton(master= self.TopFrame, text='Create Meme', font=('calibri',25),fg_color=colours.button,hover_color=colours.buttonHover,command=self.openEmptyImage)
         createNew.pack(side=tk.LEFT, anchor='n' ,padx=10,pady=10)
 
+        #sigmamaaaaaaaaaaaamustardddddddddd
+        loadimageButton = ctk.CTkButton(master=self.TopFrame, text='Load Image', font=('calibri',25),fg_color=colours.button, hover_color=colours.buttonHover, command=self.openImageFromFile)
+        loadimageButton.pack(side=tk.LEFT , anchor = 'nw', padx=10,pady=10)
+
         #delete all images
         deleteAll = ctk.CTkButton(master=self.TopFrame, text='Delete All', font=('calibri',25), fg_color=colours.redButton, hover_color=colours.redButtonHover, command=self.deleteAll)
         deleteAll.pack(side=tk.LEFT, anchor='n',padx=10,pady=10)
@@ -117,13 +122,14 @@ class Gallery():
             #add the new icons if its changed
             self.clearMemeIcons()
             for index, item in enumerate(filenames):
-                image = Image.open(f"{Path}/{item}")
-                #resize the image to fit within the icon size
-                image.thumbnail((iconSize,iconSize))
-                image = ImageTk.PhotoImage(image)
+                if item[-4:] == ".png" or item[-4:] == ".jpg":
+                    image = Image.open(f"{Path}/{item}")
+                    #resize the image to fit within the icon size
+                    image.thumbnail((iconSize,iconSize))
+                    image = ImageTk.PhotoImage(image)
 
-                newIcon = imageicon.ImageIcon(self,image,iconSize,index,item)
-                self.memeIcons.append(newIcon)
+                    newIcon = imageicon.ImageIcon(self,image,iconSize,index,item)
+                    self.memeIcons.append(newIcon)
             
     def packMemeIcons(self):
         """pack all the meme thumbnails to the scroll area"""
@@ -206,4 +212,12 @@ class Gallery():
         """open the editor with nothing loaded"""
         if not self.pause:
             self.frame.destroy()
-            self.main.editor.loadImage()
+            self.main.editor.openImage()
+
+    def openImageFromFile(self):
+        """opens a filedialog box to get an image location to load into the editor"""
+        filename = filedialog.askopenfilename(title='open an image', filetypes=[('all files','*.*'),('PNG file','*.png'),('JPEG file','*.jpg')])
+
+        if filename[-4:] == ".png" or filename[-4:] == '.jpg':
+            self.frame.pack_forget()
+            self.main.editor.openImage(filename)
