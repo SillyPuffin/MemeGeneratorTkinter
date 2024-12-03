@@ -33,9 +33,18 @@ class UserIcon():
         self.label.pack(side=tk.LEFT,padx=self.pad,pady=self.pad)
 
         self.label.bind('<Button-1>', self.confirmShare)
+        self.label.bind("<Enter>",self.widenBorder)
+        self.label.bind("<Leave>",self.shrinkBorder)
         
     def confirmShare(self,event):
         """executes the sharer's confirm share function passing the id of the dst account"""
         self.sharer.confirmShare(self.id)
 
+    def widenBorder(self,event):
+        """widen the border"""
+        self.frame.configure(border_width= self.border_width*2)
+
+    def shrinkBorder(self,event):
+        """shrink the border"""
+        self.frame.configure(border_width = self.border_width)
         

@@ -44,6 +44,8 @@ class Sharer():
         self.frame = ctk.CTkFrame(master=self.masterFrame, fg_color=colours.backgroundColour, border_color=colours.backgroundAccent,border_width=borderwidth,corner_radius=0, height=height,width=self.screenmaxwidth)
         self.frame.pack_propagate(False)
 
+        self.viewer.gallery.root.bind("<Escape>", self.exitSharer,add= '+')
+
         self.topframe = ctk.CTkFrame(master=self.frame,fg_color=colours.backgroundHighlight, border_color=colours.backgroundAccent,border_width=borderwidth,corner_radius=0,width=self.screenmaxwidth)
 
         self.exitIcon = ctk.CTkImage(Image.open('Graphics/cross.png'),None,(24,24))
@@ -69,7 +71,7 @@ class Sharer():
         """un packs the sharer"""
         self.frame.place_forget()
     
-    def exitSharer(self):
+    def exitSharer(self,event=None):
         "unpacks and unpauses the menus"
         self.closeSharer()
         self.viewer.unpause()

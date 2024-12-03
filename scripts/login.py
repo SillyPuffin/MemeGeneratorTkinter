@@ -194,9 +194,11 @@ class LoginScreen():
         password = ''
         if self.user.get() != '' and self.userTypedusername == True:
             username = self.user.get()
+            username = username.strip()
 
         if self.password.get() != '' and self.userTypedPass == True:
             password = self.password.get()
+            password = password.strip()
 
 
         if not database.isUsernameInAccounts(username,self.DatabasePath) and (username != "" and password != ""):
@@ -231,9 +233,11 @@ class LoginScreen():
         password = ''
         if self.user.get() != '' and self.userTypedusername == True:
             username = self.user.get()
+            username= username.strip()
 
         if self.password.get() != '' and self.userTypedPass == True:
             password = self.password.get()
+            password = password.strip()
 
         if database.isUsernameInAccounts(username, self.DatabasePath):
             id = database.checkPassword(username,password,self.DatabasePath)

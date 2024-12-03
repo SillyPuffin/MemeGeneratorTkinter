@@ -36,6 +36,7 @@ class Viewer():
     def createMainFrame(self):
         """instantiate the main frame for all elements of the viewer"""
         self.frame= tk.Frame(master=self.gallery.root, background=colours.backgroundColour)
+        self.gallery.root.bind("<Escape>",self.backToGallery, add="+")
        
     def packMainFrame(self):
         """packs the main frame again but doesn't delete the old one"""
@@ -211,7 +212,7 @@ class Viewer():
             confirm = confirmbox.ConfirmBox('Are you sure?',self.frame,self.removeImageFile,self.unpause)
             self.pause = True
 
-    def backToGallery(self):
+    def backToGallery(self,event=None):
         """unpack the main frame and reload the gallery"""
         if not self.pause:
             self.frame.pack_forget()
