@@ -13,6 +13,7 @@ class Editor():
 
         self.templateIcons = []
 
+        self.baseImage = None
         self.image = None
         self.displayImage = None
 
@@ -44,7 +45,7 @@ class Editor():
         pass
 
     def loadImage(self,path):
-        """load the image into the right image"""
+        """load the image into the right window"""
         pass
 
     def createMainFrame(self):
@@ -77,11 +78,20 @@ class Editor():
         """create the bottom left window that contains the entry boxes for top and bottom text"""
         pass
 
+    def updateText(self):
+        """update the text on the image and change the display image to match"""
+        pass
+
+    def drawText(self, text, y):
+        """draw the text on the top or bottom of the bed"""
+        pass
+
     def openMainFrame(self):
         """pack the main frame"""
         self.frame.pack(fill=tk.BOTH,expand= True)
 
     def backToGallery(self):
+        """go back to the gallery"""
         self.frame.pack_forget()
         self.image = None
         self.displayImage = None
