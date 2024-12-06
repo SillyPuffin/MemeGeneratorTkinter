@@ -112,14 +112,14 @@ class Sharer():
         """create the confirm box for sharing the image"""
         self.closeSharer()
         self.id_dst = id_destination
-        self.confirm = confirmbox.ConfirmBox('Do you want to copy This?', self.masterFrame, self.copyImage, self.openSharer)
+        self.confirm = confirmbox.ConfirmBox('Do you want to share This?', self.masterFrame, self.copyImage, self.openSharer)
 
     def shareNotification(self):
         """little popup box to show that the image has been shared"""
         self.notiFrame = ctk.CTkFrame(master=self.viewer.frame, corner_radius=0,border_width=2, border_color=colours.backgroundAccent, fg_color=colours.backgroundHighlight)
         notification = ctk.CTkLabel(master=self.notiFrame, text='Sharing...',text_color=colours.successText, font = ('calibri',25))
         notification.pack(padx=10,pady=7)
-        self.notiFrame.place(relx=0.5,rely=0.5,anchor='center')
+        self.notiFrame.place(relx=0.5,rely=0.5 ,anchor='center')
         self.viewer.gallery.root.update()
         sleep(1)
         self.notiFrame.destroy()

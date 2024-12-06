@@ -211,7 +211,7 @@ class Gallery():
     def openEmptyImage(self):
         """open the editor with nothing loaded"""
         if not self.pause:
-            self.frame.destroy()
+            self.frame.pack_forget()
             self.main.editor.openImage()
 
     def openImageFromFile(self):

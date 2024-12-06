@@ -7,6 +7,7 @@ from .imageicon import *
 from .confirmbox import ConfirmBox
 from .usericon import UserIcon
 from .sharer import Sharer
+from .entrybox import EntryBox
 
 
 from .colours import *
