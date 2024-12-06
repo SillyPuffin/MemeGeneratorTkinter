@@ -98,7 +98,8 @@ class Editor():
             self.topFrame.pack_propagate(False)
             self.topFrame.configure(height = titleHeight)
             title.place(relx=0.5,rely=0.5,anchor='center')
-
+        else:
+            title.place(relx=0.5,rely=0.5,anchor='center')
 
     def createLeftWindow(self):
         """create the bottom left window that contains the entry boxes for top and bottom text"""

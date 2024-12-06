@@ -93,7 +93,13 @@ class Gallery():
         Title.place(relx=0.5,rely=0.5,anchor='center')
 
         self.root.update_idletasks()
-        self.TopFrame.configure(height=Title.winfo_height()+10)
+        maxbuttonHeight= createNew.winfo_height() + 20
+        titleHeight = Title.winfo_height() + 10
+        
+        if titleHeight > maxbuttonHeight:
+            self.TopFrame.configure(height=Title.winfo_height()+10)
+        else:
+            self.TopFrame.configure(height=maxbuttonHeight)
 
     def createGalleryScroll(self):
         """create and pack all elements for the viewing scroll bar area"""
