@@ -62,4 +62,5 @@ class EntryBox():
             self.textBox.configure(font=self.font)
 
     def executeCommand(self,event):
-        self.command()
+        if self.command:
+            self.command()

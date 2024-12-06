@@ -9,7 +9,7 @@ from pathlib import Path
 #my moduels
 from scripts import colours
 from scripts import database
-
+from scripts import entrybox
 
 class LoginScreen():
     def __init__(self, main):
@@ -39,16 +39,9 @@ class LoginScreen():
         #entries-----------------------------------------------------------------------------------------------
 
         #username#####
-        self.user = ctk.CTkEntry(master=masterFrame,font=("Microsoft YaHei UI light", 30), height=self.entryHeight, width=self.entryWidth, text_color=colours.defaultText, fg_color=colours.textboxBackground, border_color=colours.textboxShadow )
-        self.user.grid(row=2,column = 0, sticky="S",pady=5,padx=15)
-
-        #refill with username when empty
-        self.userTypedusername = False
-        self.user.insert(0,'Username')
-        self.user.bind('<FocusOut>',self.OnExitUser)
-        self.user.bind('<FocusIn>', self.OnEntryUser)
-        self.user.bind("<KeyPress>", self.OnKeyPressUser)
-
+        self.user = entrybox.EntryBox(masterFrame, None, self.entryWidth, self.entryHeight, ('microsoft Yahei ui light',30),colours.textboxBackground, colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Username')
+        self.user.textBox.grid(row=2,column = 0, sticky="S",pady=5,padx=15)
+        
         #password entry and show password button frame########
         passwordFrame = tk.Frame(master=masterFrame, background=colours.backgroundHighlight)
         passwordFrame.grid(row=3,column=0,pady=5)
@@ -143,7 +136,7 @@ class LoginScreen():
         self.frame.pack(fill=tk.BOTH,side=tk.TOP,expand=True)
 
         #exit button
-        exitButton = ctk.CTkButton(master=self.frame, fg_color=colours.darkbutton,hover_color=colours.darkbuttonHover, text='Exit',width=40,height=10,command=self.main.closeApp)
+        exitButton = ctk.CTkButton(master=self.frame, fg_color=colours.darkbutton,hover_color=colours.backgroundAccent, text='Exit',width=40,height=10,command=self.main.closeApp)
         exitButton.pack(anchor='ne', side=tk.TOP,pady=5,padx=10)
 
         #title
@@ -192,8 +185,8 @@ class LoginScreen():
 
         username = ''
         password = ''
-        if self.user.get() != '' and self.userTypedusername == True:
-            username = self.user.get()
+        if self.user.textBox.get() != '' and self.user.userTyped:
+            username = self.user.textBox.get()
             username = username.strip()
 
         if self.password.get() != '' and self.userTypedPass == True:
@@ -231,8 +224,8 @@ class LoginScreen():
         """try to login the account using the current username and password"""
         username = ''
         password = ''
-        if self.user.get() != '' and self.userTypedusername == True:
-            username = self.user.get()
+        if self.user.textBox.get() != '' and self.user.userTyped:
+            username = self.user.textBox.get()
             username= username.strip()
 
         if self.password.get() != '' and self.userTypedPass == True:
@@ -267,7 +260,6 @@ class LoginScreen():
         sleep(1)
         label.destroy()
 
-
 ##default text logic
     def ReplaceDefaultText(self,text,entry):
         """reenters password or username when the entery box is empty"""
@@ -280,18 +272,6 @@ class LoginScreen():
         if entry.get() == text:
             entry.delete(0,tk.END)
             entry.configure(text_color=colours.typeText)
-
-#placin and removing default text for username
-    def OnExitUser(self,event):
-        """re-enter username when the text box is empty"""
-        if self.user.get() == "":
-            self.userTypedusername = False
-            self.ReplaceDefaultText('Username',self.user)
-
-    def OnEntryUser(self,event):
-        """remove username default text when clicking on text box"""
-        if not self.userTypedusername:
-            self.DeleteDefaultText('Username',self.user)
     
 #placing and removing defualt text for password
     def OnExitPass(self,event):

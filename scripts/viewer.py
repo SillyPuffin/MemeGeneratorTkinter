@@ -86,7 +86,7 @@ class Viewer():
         self.topHeight = backButton.winfo_reqheight() + 10*2 #used to calculate the height of the top bar
 
         #title in the center
-        Title = ctk.CTkLabel(master=self.TopFrame, text_color=colours.Heading, font=('impact',50), text='Image Viewer')
+        Title = ctk.CTkLabel(master=self.TopFrame, text_color=colours.Heading, font=('impact',40), text='Image Viewer')
         Title.place(relx=0.5,rely=0.5,anchor='center')
 
         self.gallery.root.update_idletasks()

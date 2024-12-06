@@ -1,8 +1,6 @@
 creating memes
-dont load memes that arent jpeg or png
 
 extras
-   -replace username entries with textbox class
    -replace buttons with smaller form factor matching background colours like the editor
    -add a little subtitle which says how many memes each account has when sharing
    

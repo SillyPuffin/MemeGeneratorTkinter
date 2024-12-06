@@ -117,7 +117,7 @@ class Editor():
         self.font = self.fontList['Impact']
         fontnames = list(self.fontList.keys())
 
-        self.fontChangeBox = ctk.CTkOptionMenu(self.centerFrame,height=50, width=self.entryWidth, bg_color=colours.backgroundHighlight,button_color=colours.textboxShadow, button_hover_color=colours.textboxHover, dropdown_fg_color=colours.textboxBackground,dropdown_text_color=colours.typeText, fg_color=colours.textboxBackground,dropdown_font=self.font, font=self.font, text_color=colours.typeText
+        self.fontChangeBox = ctk.CTkOptionMenu(self.centerFrame,height=50, width=self.entryWidth, bg_color=colours.backgroundHighlight,button_color=colours.textboxShadow, button_hover_color=colours.textboxHover,dropdown_hover_color=colours.dropDownHover, dropdown_fg_color=colours.textboxBackground,dropdown_text_color=colours.typeText, fg_color=colours.textboxBackground,dropdown_font=self.font, font=self.font, text_color=colours.typeText
         ,values=fontnames, command=self.switchFont)
         self.fontChangeBox.pack(padx=10,pady=10)
 

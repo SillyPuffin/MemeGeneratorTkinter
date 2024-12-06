@@ -89,7 +89,7 @@ class Gallery():
         deleteaccount.pack(side=tk.RIGHT, anchor='n',pady=10,padx=10)
 
         #title in the center
-        Title = ctk.CTkLabel(master=self.TopFrame, text_color=colours.Heading, font=('impact',70), text='Gallery')
+        Title = ctk.CTkLabel(master=self.TopFrame, text_color=colours.Heading, font=('impact',45), text='Gallery')
         Title.place(relx=0.5,rely=0.5,anchor='center')
 
         self.root.update_idletasks()
@@ -222,7 +222,7 @@ class Gallery():
 
     def openImageFromFile(self):
         """opens a filedialog box to get an image location to load into the editor"""
-        filename = filedialog.askopenfilename(title='open an image', filetypes=[('all files','*.*'),('PNG file','*.png'),('JPEG file','*.jpg')])
+        filename = filedialog.askopenfilename(title='open an image', filetypes=[('all files','*.png *.jpg'),('PNG file','*.png'),('JPEG file','*.jpg')])
 
         if filename[-4:] == ".png" or filename[-4:] == '.jpg':
             self.frame.pack_forget()
