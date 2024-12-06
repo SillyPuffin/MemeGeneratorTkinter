@@ -103,21 +103,27 @@ class Editor():
     def createLeftWindow(self):
         """create the bottom left window that contains the entry boxes for top and bottom text"""
         self.entryWidth = 400
+        padx = 10
+        borderWidth = 2
+        framewidth = self.entryWidth+2*padx + 2*borderWidth
 
-        self.leftWindow = ctk.CTkFrame(master=self.frame,fg_color = colours.backgroundHighlight, border_color=colours.backgroundAccent, border_width=2, bg_color=colours.backgroundColour)
+        self.leftWindow = ctk.CTkFrame(master=self.frame, width=framewidth, fg_color = colours.backgroundHighlight,border_color=colours.backgroundAccent, border_width=borderWidth, bg_color=colours.backgroundColour)
         self.leftWindow.pack(side=tk.LEFT, fill=tk.Y)
+
+        self.centerFrame = tk.Frame(master=self.leftWindow, background=colours.backgroundHighlight)
+        self.centerFrame.place(relx=0.5,rely=0.5,anchor='center')
         
         self.font = self.fontList['Impact']
         fontnames = list(self.fontList.keys())
 
-        self.fontChangeBox = ctk.CTkOptionMenu(self.leftWindow,height=50, width=self.entryWidth, bg_color=colours.backgroundHighlight,button_color=colours.textboxShadow, button_hover_color=colours.textboxHover, dropdown_fg_color=colours.textboxBackground,dropdown_text_color=colours.typeText, fg_color=colours.textboxBackground,dropdown_font=self.font, font=self.font, text_color=colours.typeText
+        self.fontChangeBox = ctk.CTkOptionMenu(self.centerFrame,height=50, width=self.entryWidth, bg_color=colours.backgroundHighlight,button_color=colours.textboxShadow, button_hover_color=colours.textboxHover, dropdown_fg_color=colours.textboxBackground,dropdown_text_color=colours.typeText, fg_color=colours.textboxBackground,dropdown_font=self.font, font=self.font, text_color=colours.typeText
         ,values=fontnames, command=self.switchFont)
         self.fontChangeBox.pack(padx=10,pady=10)
 
-        self.topText = entrybox.EntryBox(self.leftWindow, self.updateText, self.entryWidth, 50, self.font,colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Top Text')
+        self.topText = entrybox.EntryBox(self.centerFrame, self.updateText, self.entryWidth, 50, self.font,colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Top Text')
         self.topText.textBox.pack(padx=10,pady=10)
 
-        self.bottomText = entrybox.EntryBox(self.leftWindow, self.updateText, self.entryWidth, 50, self.font,colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Bottom Text')
+        self.bottomText = entrybox.EntryBox(self.centerFrame, self.updateText, self.entryWidth, 50, self.font,colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Bottom Text')
         self.bottomText.textBox.pack(padx=10,pady=10)
 
     def createFontList(self):
