@@ -65,7 +65,7 @@ class Gallery():
 
         #button for new
         #does nothing at the moment because they dont exist
-        createNew = ctk.CTkButton(master= self.TopFrame, text='Create Meme', font=('calibri',25),fg_color=colours.button,hover_color=colours.buttonHover,command=self.openEmptyImage)
+        createNew = ctk.CTkButton(master= self.TopFrame, text='Create Meme', font=('calibri',25),corner_radius=8, fg_color=colours.button,hover_color=colours.buttonHover,command=self.openEmptyImage)
         createNew.pack(side=tk.LEFT, anchor='n' ,padx=10,pady=10)
 
         #sigmamaaaaaaaaaaaamustardddddddddd
@@ -224,6 +224,6 @@ class Gallery():
         """opens a filedialog box to get an image location to load into the editor"""
         filename = filedialog.askopenfilename(title='open an image', filetypes=[('all files','*.png *.jpg'),('PNG file','*.png'),('JPEG file','*.jpg')])
 
-        if filename[-4:] == ".png" or filename[-4:] == '.jpg':
-            self.frame.pack_forget()
-            self.main.editor.openImage(filename)
+        self.frame.pack_forget()
+        print(f'loading {filename}')
+        self.main.editor.openImage(filename)

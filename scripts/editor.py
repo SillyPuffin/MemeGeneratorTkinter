@@ -1,7 +1,11 @@
 import tkinter as tk
 import customtkinter as ctk
 
-from tkinter import font
+from tkinter import font, filedialog
+
+from PIL import Image, ImageTk
+
+from time import sleep
 
 from scripts import colours
 from scripts import database
@@ -23,21 +27,31 @@ class Editor():
 
         self.createMainFrame()
         self.createTopBar()
+
         self.createFontList()
         self.createLeftWindow()
 
+        self.createRightWindow()
+
+##image load/save logic
     def openImage(self, path=None):
         """loads the image supplied in the path and opens the editor or opens an empty image"""
         self.currentAccount = self.main.currentAccount
 
+        self.openMainFrame()
+
         if path:
             self.loadImage(path)
-
-        self.openMainFrame()
+        else:
+            self.title.configure(text='Editor')
 
     def openImageFromFile(self):
         """open file dialog to open an image"""
-        pass
+        filename = filedialog.askopenfilename(title='open an image', filetypes=[('all files','*.png *.jpg'),('PNG file','*.png'),('JPEG file','*.jpg')])
+
+        print(f"loading {filename}")
+
+        self.loadImage(filename)
 
     def LoadTemplate(self,templateName):
         """load a template image from the template directory"""
@@ -48,12 +62,69 @@ class Editor():
 
     def saveImage(self):
         """save the current image to the users meme folder"""
-        pass
+
+        if self.imageNameBox.userTyped and self.imageNameBox.textBox.get() != '':
+            self.imageName = self.imageNameBox.textBox.get()
+
+            savePath = database.getFolderPath(self.currentAccount, self.DatabasePath)
+
+            database.saveImage(self.image, self.imageName +'.png', savePath)
+
+            successSavelabel = tk.Label(master=self.saveFrame, text='Saving Successful', font=('calibri',20), fg=colours.successText,bg=colours.backgroundHighlight)
+            successSavelabel.grid(row=4, column=0, sticky='w')
+            self.root.update()
+            sleep(1.5)
+            successSavelabel.grid_forget()
+        else:
+            print('The image has no Name')
+            failSavelabel = tk.Label(master=self.saveFrame, text='Image has No Name', font=('calibri',12), fg=colours.alertText,bg=colours.backgroundHighlight)
+            failSavelabel.grid(row=4, column=0, sticky='w')
+            self.root.update()
+            sleep(0.75)
+            failSavelabel.grid_forget()
 
     def loadImage(self,path):
         """load the image into the right window"""
-        pass
+        self.root.update_idletasks()
+        self.imageWidth = self.main.screenSize[0] - self.leftWindow.winfo_width() - 20
+        self.imageHeight = self.main.screenSize[1] - self.topFrame.winfo_height() - 20
 
+        self.baseImage = Image.open(path)
+        self.image = self.baseImage.copy()
+
+        self.displayImage = self.image.copy()
+        self.displayImage.thumbnail((self.imageWidth, self.imageHeight))
+        self.displayImage = ImageTk.PhotoImage(self.displayImage)
+
+
+        #showing the name of the file loaded on the editor title
+        count = 1
+        while path[-count] != '/':
+            count+=1
+
+        self.imageName = path[-(count-1):-4]
+
+        self.title.configure(text=f'Editor - {self.imageName}')
+        #putting in the meme name box the loaded image name
+        self.imageNameBox.textBox.configure(text_color=colours.typeText)
+        self.imageNameBox.textBox.delete(0,tk.END)
+        self.imageNameBox.textBox.insert(0, self.imageName)
+        self.imageNameBox.userTyped = True
+
+        self.imageLabel.place_forget()
+        self.imageLabel = tk.Label(master= self.imageFrame, text='', image= self.displayImage, bg=colours.backgroundColour)
+        self.imageLabel.place(relx=0.5,rely=0.5,anchor='center')
+
+    def saveNotification(self):
+        """little notifcation box pop-up to tell the user that they have saved the image"""
+        self.notiFrame = ctk.CTkFrame(master=self.frame, corner_radius=0,border_width=2, border_color=colours.backgroundAccent, fg_color=colours.backgroundHighlight)
+        notification = ctk.CTkLabel(master=self.notiFrame, text='Saving...',text_color=colours.successText, font = ('calibri',30))
+        notification.pack(padx=10,pady=7)
+        self.notiFrame.place(relx=0.5,rely=0.5,anchor='center')
+        self.root.update()
+        sleep(1)
+        self.notiFrame.destroy()
+##generating gui     
     def createMainFrame(self):
         """create the main frame"""
         self.frame = tk.Frame(master=self.main.root,background=colours.backgroundColour)
@@ -76,7 +147,7 @@ class Editor():
         self.topFrame = ctk.CTkFrame(master=self.frame, fg_color=colours.backgroundHighlight, border_color=colours.backgroundAccent, border_width=2, corner_radius=0)
         self.topFrame.pack(side='top', fill=tk.X)
 
-        title = tk.Label(master=self.topFrame, text='Editor',font=('impact',18),bg=colours.backgroundHighlight, fg=colours.Heading)
+        self.title = tk.Label(master=self.topFrame, text='Editor',font=('impact',20),bg=colours.backgroundHighlight, fg=colours.Heading)
 
         saveButton = ctk.CTkButton(master=self.topFrame, text='Save', font=('calibri',20),width=1,corner_radius=4 ,fg_color=colours.backgroundHighlight, hover_color=colours.backgroundAccent,command=self.saveImage)
         saveButton.pack(side='left', anchor='w',pady=4, padx=(5,3))
@@ -92,40 +163,76 @@ class Editor():
 
         #setting the frame height
         maxButtonHeight = templatesButton.winfo_reqheight() + 8
-        titleHeight = title.winfo_reqheight() + 8
+        titleHeight = self.title.winfo_reqheight() + 8
 
         if titleHeight > maxButtonHeight:
             self.topFrame.pack_propagate(False)
             self.topFrame.configure(height = titleHeight)
-            title.place(relx=0.5,rely=0.5,anchor='center')
+            self.title.place(relx=0.5,rely=0.5,anchor='center')
         else:
-            title.place(relx=0.5,rely=0.5,anchor='center')
+            self.title.place(relx=0.5,rely=0.5,anchor='center')
 
     def createLeftWindow(self):
         """create the bottom left window that contains the entry boxes for top and bottom text"""
-        self.entryWidth = 400
+        self.entryWidth = 350
         padx = 10
         borderWidth = 2
         framewidth = self.entryWidth+2*padx + 2*borderWidth
 
         self.leftWindow = ctk.CTkFrame(master=self.frame, width=framewidth, fg_color = colours.backgroundHighlight,border_color=colours.backgroundAccent, border_width=borderWidth, bg_color=colours.backgroundColour)
         self.leftWindow.pack(side=tk.LEFT, fill=tk.Y)
+        self.leftWindow.pack_propagate(False)
 
-        self.centerFrame = tk.Frame(master=self.leftWindow, background=colours.backgroundHighlight)
-        self.centerFrame.place(relx=0.5,rely=0.5,anchor='center')
+        #####SAVING NAME
+        self.saveFrame = tk.Frame(master=self.leftWindow, background=colours.backgroundHighlight)
+        self.saveFrame.pack(side='top', anchor='n', pady=borderWidth)
+
+        saveTitle = tk.Label(master=self.saveFrame, text='Save Name', font = ('calibri',45), fg=colours.Heading, background=colours.backgroundHighlight)
+        saveTitle.grid(row=0, column=0, sticky='w', padx=0)
+
+        topsaveDiv = tk.Frame(self.saveFrame, width=self.entryWidth, height = 2, background=colours.dividerColour)
+        topsaveDiv.grid(row=1,column=0)
+
+        self.imageNameBox = entrybox.EntryBox(self.saveFrame, None, self.entryWidth, 50, ('Microsoft Yahei UI Light',20),colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Meme Name')
+        self.imageNameBox.textBox.grid(row=2, column = 0,pady=10)
+
+        bottomsaveDiv = tk.Frame(self.saveFrame, width=self.entryWidth, height=2 , background=colours.dividerColour)
+        bottomsaveDiv.grid(row=3, column=0)
+
+        #######TOP AND BOTTOM TEXT
+
+        self.textFrame = tk.Frame(master=self.leftWindow, background=colours.backgroundHighlight)
+        self.textFrame.place(relx=0.5,rely=0.5,anchor='center')
+
+        textTitle = tk.Label(master=self.textFrame, text='Text', font = ('calibri',45), fg=colours.Heading, background=colours.backgroundHighlight)
+        textTitle.grid(row=0, column=0, sticky='w')
+
+        topTextDiv = tk.Frame(self.textFrame, width=self.entryWidth, height = 2, background=colours.dividerColour)
+        topTextDiv.grid(row=1,column=0)
         
         self.font = self.fontList['Impact']
         fontnames = list(self.fontList.keys())
 
-        self.fontChangeBox = ctk.CTkOptionMenu(self.centerFrame,height=50, width=self.entryWidth, bg_color=colours.backgroundHighlight,button_color=colours.textboxShadow, button_hover_color=colours.textboxHover,dropdown_hover_color=colours.dropDownHover, dropdown_fg_color=colours.textboxBackground,dropdown_text_color=colours.typeText, fg_color=colours.textboxBackground,dropdown_font=self.font, font=self.font, text_color=colours.typeText
+        self.fontChangeBox = ctk.CTkOptionMenu(self.textFrame,height=50, width=self.entryWidth, bg_color=colours.backgroundHighlight,button_color=colours.textboxShadow, button_hover_color=colours.textboxHover,dropdown_hover_color=colours.dropDownHover, dropdown_fg_color=colours.textboxBackground,dropdown_text_color=colours.typeText, fg_color=colours.textboxBackground,dropdown_font=self.font, font=self.font, text_color=colours.typeText
         ,values=fontnames, command=self.switchFont)
-        self.fontChangeBox.pack(padx=10,pady=10)
+        self.fontChangeBox.grid(row=2,column=0, pady=(10,5))
 
-        self.topText = entrybox.EntryBox(self.centerFrame, self.updateText, self.entryWidth, 50, self.font,colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Top Text')
-        self.topText.textBox.pack(padx=10,pady=10)
+        self.topText = entrybox.EntryBox(self.textFrame, self.updateText, self.entryWidth, 50, self.font,colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Top Text')
+        self.topText.textBox.grid(row=3,column=0,pady=5)
 
-        self.bottomText = entrybox.EntryBox(self.centerFrame, self.updateText, self.entryWidth, 50, self.font,colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Bottom Text')
-        self.bottomText.textBox.pack(padx=10,pady=10)
+        self.bottomText = entrybox.EntryBox(self.textFrame, self.updateText, self.entryWidth, 50, self.font,colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Bottom Text')
+        self.bottomText.textBox.grid(row=4,column=0,pady=(5,10))
+
+        bottomTextDiv = tk.Frame(self.textFrame, width=self.entryWidth, height = 2, background=colours.dividerColour)
+        bottomTextDiv.grid(row=5, column=0)
+
+    def createRightWindow(self):
+        """generates the right window label for the image but keeps it empty"""
+        self.imageFrame = tk.Frame(master=self.frame, bg=colours.backgroundColour)
+        self.imageFrame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+
+        self.imageLabel = tk.Label(master=self.imageFrame, text='', bg=colours.backgroundColour)
+        self.imageLabel.place(relx=0.5,rely=0.5, anchor='center')
 
     def createFontList(self):
         """generate a dictionary full of all the font types"""
@@ -134,7 +241,7 @@ class Editor():
             'Impact':('Impact',size),
             'Calibri':('Calibri',size)
         }
-
+#image editing logic
     def switchFont(self,font):
         """switch the font"""
         self.font = self.fontList[font]
@@ -152,7 +259,7 @@ class Editor():
     def drawText(self, text, y):
         """draw the text on the top or bottom of the bed"""
         pass
-
+#open and lcose editor
     def openMainFrame(self):
         """pack the main frame"""
         self.frame.pack(fill=tk.BOTH,expand= True)

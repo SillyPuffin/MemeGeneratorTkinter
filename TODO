@@ -1,6 +1,12 @@
 creating memes
 
 extras
-   -replace buttons with smaller form factor matching background colours like the editor
+   -replace exits with crosses and highlight red
+   -replace delete with trash cans and have the confirm box tell what it does
+   -replace logout with symbol
+   -replace share with symbol
+   -replace load icon with file folder
    -add a little subtitle which says how many memes each account has when sharing
+
+   -auto colour bars
    
