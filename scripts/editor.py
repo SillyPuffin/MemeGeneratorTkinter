@@ -3,7 +3,7 @@ import customtkinter as ctk
 
 from tkinter import font, filedialog
 
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageFont
 
 from time import sleep
 
@@ -215,15 +215,17 @@ class Editor():
         self.fontFrame = tk.Frame(master=self.textFrame, bg=colours.backgroundHighlight)
         
         try:
-            self.ActiveFontName = self.fontList[0]
-            self.uifont = (self.fontList[0], 20)
+            self.ActiveFontName = list(self.fontList.items())[0][1]
+            self.uifont = (list(self.fontList.items())[0][1], 20)
         except:
             self.ActiveFontName = None
             self.uifont = ('Microsoft Yahei UI Light',20)
 
-        fontnames = self.fontList
+        fontnames = list(self.fontList.keys())
         fontsizeBoxWidth = 100
         pad = 10
+
+        print(self.uifont)
 
         self.fontChangeBox = ctk.CTkOptionMenu(self.fontFrame,height=50, width=self.entryWidth - fontsizeBoxWidth - pad, bg_color=colours.backgroundHighlight,button_color=colours.textboxShadow, button_hover_color=colours.textboxHover,dropdown_hover_color=colours.dropDownHover, dropdown_fg_color=colours.textboxBackground,dropdown_text_color=colours.typeText, fg_color=colours.textboxBackground,dropdown_font=self.uifont, font=self.uifont, text_color=colours.typeText
         ,values=fontnames, command=self.switchFont)
@@ -234,6 +236,7 @@ class Editor():
         self.fontsizeBox.set(str(self.size)) 
         self.fontsizeBox.bind('<Return>',self.setFontSize)
         self.fontsizeBox.pack(side='left')
+
         #packing font seletcion grid
         self.fontFrame.grid(row= 2, column=0, pady=(10,5))
 
@@ -268,11 +271,12 @@ class Editor():
         if pathwalk != []:
             fontnames = pathwalk[0][2]
 
-        self.fontList = []
+        self.fontList = {}
 
         for name in fontnames:
             ctk.FontManager.load_font("Fonts/"+name)
-            self.fontList.append(name[:-4])
+            familyName = ImageFont.truetype("Fonts/"+name).getname()[0]
+            self.fontList[name[:-4]] = familyName
             
 
         print(self.fontList)
@@ -280,7 +284,7 @@ class Editor():
 #image editing logic
     def switchFont(self,font):
         """switch the font"""
-        self.uifont = (font, 20)
+        self.uifont = (self.fontList[font], 20)
         
         self.fontChangeBox.configure(font=self.uifont, dropdown_font=self.uifont)
 
