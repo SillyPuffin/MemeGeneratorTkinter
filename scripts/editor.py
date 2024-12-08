@@ -225,8 +225,6 @@ class Editor():
         fontsizeBoxWidth = 100
         pad = 10
 
-        print(self.uifont)
-
         self.fontChangeBox = ctk.CTkOptionMenu(self.fontFrame,height=50, width=self.entryWidth - fontsizeBoxWidth - pad, bg_color=colours.backgroundHighlight,button_color=colours.textboxShadow, button_hover_color=colours.textboxHover,dropdown_hover_color=colours.dropDownHover, dropdown_fg_color=colours.textboxBackground,dropdown_text_color=colours.typeText, fg_color=colours.textboxBackground,dropdown_font=self.uifont, font=self.uifont, text_color=colours.typeText
         ,values=fontnames, command=self.switchFont)
         self.fontChangeBox.pack(side='left',padx=(0,10))
