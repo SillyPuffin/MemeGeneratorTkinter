@@ -7,6 +7,8 @@ from PIL import Image, ImageTk
 
 from time import sleep
 
+from os import walk
+
 from scripts import colours
 from scripts import database
 from scripts import entrybox
@@ -202,29 +204,52 @@ class Editor():
         #######TOP AND BOTTOM TEXT
 
         self.textFrame = tk.Frame(master=self.leftWindow, background=colours.backgroundHighlight)
-        self.textFrame.place(relx=0.5,rely=0.5,anchor='center')
+        self.textFrame.pack(side='top')
 
         textTitle = tk.Label(master=self.textFrame, text='Text', font = ('calibri',45), fg=colours.Heading, background=colours.backgroundHighlight)
         textTitle.grid(row=0, column=0, sticky='w')
 
         topTextDiv = tk.Frame(self.textFrame, width=self.entryWidth, height = 2, background=colours.dividerColour)
         topTextDiv.grid(row=1,column=0)
+        #font selection
+        self.fontFrame = tk.Frame(master=self.textFrame, bg=colours.backgroundHighlight)
         
-        self.font = self.fontList['Impact']
-        fontnames = list(self.fontList.keys())
+        try:
+            self.ActiveFontName = self.fontList[0]
+            self.uifont = (self.fontList[0], 20)
+        except:
+            self.ActiveFontName = None
+            self.uifont = ('Microsoft Yahei UI Light',20)
 
-        self.fontChangeBox = ctk.CTkOptionMenu(self.textFrame,height=50, width=self.entryWidth, bg_color=colours.backgroundHighlight,button_color=colours.textboxShadow, button_hover_color=colours.textboxHover,dropdown_hover_color=colours.dropDownHover, dropdown_fg_color=colours.textboxBackground,dropdown_text_color=colours.typeText, fg_color=colours.textboxBackground,dropdown_font=self.font, font=self.font, text_color=colours.typeText
+        fontnames = self.fontList
+        fontsizeBoxWidth = 100
+        pad = 10
+
+        self.fontChangeBox = ctk.CTkOptionMenu(self.fontFrame,height=50, width=self.entryWidth - fontsizeBoxWidth - pad, bg_color=colours.backgroundHighlight,button_color=colours.textboxShadow, button_hover_color=colours.textboxHover,dropdown_hover_color=colours.dropDownHover, dropdown_fg_color=colours.textboxBackground,dropdown_text_color=colours.typeText, fg_color=colours.textboxBackground,dropdown_font=self.uifont, font=self.uifont, text_color=colours.typeText
         ,values=fontnames, command=self.switchFont)
-        self.fontChangeBox.grid(row=2,column=0, pady=(10,5))
+        self.fontChangeBox.pack(side='left',padx=(0,10))
 
-        self.topText = entrybox.EntryBox(self.textFrame, self.updateText, self.entryWidth, 50, self.font,colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Top Text')
+        self.fontsizeBox = ctk.CTkComboBox(self.fontFrame, width= fontsizeBoxWidth, height=50, bg_color=colours.backgroundHighlight, button_color=colours.textboxShadow, button_hover_color=colours.textboxHover, dropdown_hover_color=colours.dropDownHover, dropdown_fg_color=colours.textboxBackground, dropdown_text_color=colours.typeText, fg_color=colours.textboxBackground, dropdown_font=('calibri',20), font=('calibri',20),text_color=colours.typeText,
+        values = [str(i) for i in range(2,47,2)], command=self.setFontSize)
+        self.fontsizeBox.set(str(self.size)) 
+        self.fontsizeBox.bind('<Return>',self.setFontSize)
+        self.fontsizeBox.pack(side='left')
+        #packing font seletcion grid
+        self.fontFrame.grid(row= 2, column=0, pady=(10,5))
+
+        self.topText = entrybox.EntryBox(self.textFrame, self.updateText, self.entryWidth, 50, self.uifont,colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Top Text')
         self.topText.textBox.grid(row=3,column=0,pady=5)
 
-        self.bottomText = entrybox.EntryBox(self.textFrame, self.updateText, self.entryWidth, 50, self.font,colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Bottom Text')
+        self.bottomText = entrybox.EntryBox(self.textFrame, self.updateText, self.entryWidth, 50, self.uifont,colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Bottom Text')
         self.bottomText.textBox.grid(row=4,column=0,pady=(5,10))
 
         bottomTextDiv = tk.Frame(self.textFrame, width=self.entryWidth, height = 2, background=colours.dividerColour)
         bottomTextDiv.grid(row=5, column=0)
+
+        ###Borders
+
+
+        ###resizing
 
     def createRightWindow(self):
         """generates the right window label for the image but keeps it empty"""
@@ -236,21 +261,39 @@ class Editor():
 
     def createFontList(self):
         """generate a dictionary full of all the font types"""
-        size = 20
-        self.fontList = {
-            'Impact':('Impact',size),
-            'Calibri':('Calibri',size)
-        }
+        self.size= 20
+
+        pathwalk = list(walk('Fonts/'))
+
+        if pathwalk != []:
+            fontnames = pathwalk[0][2]
+
+        self.fontList = []
+
+        for name in fontnames:
+            ctk.FontManager.load_font("Fonts/"+name)
+            self.fontList.append(name[:-4])
+            
+
+        print(self.fontList)
+
 #image editing logic
     def switchFont(self,font):
         """switch the font"""
-        self.font = self.fontList[font]
+        self.uifont = (font, 20)
+        
+        self.fontChangeBox.configure(font=self.uifont, dropdown_font=self.uifont)
 
-        self.fontChangeBox.configure(font=self.font, dropdown_font=self.font)
+        self.topText.setFont(self.uifont)
 
-        self.topText.setFont(self.font)
+        self.bottomText.setFont(self.uifont)
 
-        self.bottomText.setFont(self.font)
+    def setFontSize(self, choice=None):
+        """set the global font size for top and bottom text"""
+        if type(choice)==str:
+            self.size = int(choice)
+        else:
+            self.size = int(self.fontsizeBox.get())
 
     def updateText(self):
         """update the text on the image and change the display image to match"""
