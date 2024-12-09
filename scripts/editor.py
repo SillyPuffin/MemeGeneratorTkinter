@@ -343,16 +343,13 @@ class Editor():
                         partWidth = self.getWordWidth(font_ttf, part, draw)
                         if partWidth > maxWidth:
                             # If adding one more character exceeds max width add the last fitting letters
-                            print(temp_word[:i-1])
                             lines.append(temp_word[:i-1])
                             temp_word = temp_word[i-1:]  # Update remaining word
-                            print(f"cut tempword {temp_word}")
                             breaked= True
                             break
                         
                     #if the for loop ends and it hasn't appended the last part add it to a new line
                     if not breaked:
-                        print(f"part : {part}")
                         current_line.append(part)
                         temp_word = ''
             
@@ -373,8 +370,10 @@ class Editor():
             lines.append(" ".join(current_line))
 
         #find the height of a single line
+        ascent, descent = font_ttf.getmetrics()#get the height of the highest letters like b and lowest like g form the baseline
+
         bounding = draw.multiline_textbbox(xy=(0,0), text="\n".join(lines), font=font_ttf)
-        height = bounding[3] - bounding[1]
+        height = (bounding[3]+descent) - (bounding[1])
 
         return "\n".join(lines) , height
     
