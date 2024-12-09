@@ -371,9 +371,11 @@ class Editor():
 
         #find the height of a single line
         ascent, descent = font_ttf.getmetrics()#get the height of the highest letters like b and lowest like g form the baseline
+        (width, baseline), (offset_x, offset_y) = font_ttf.font.getsize('A')
 
-        bounding = draw.multiline_textbbox(xy=(0,0), text="\n".join(lines), font=font_ttf)
-        height = (bounding[3]+descent) - (bounding[1])
+        height = (ascent) * len(lines)
+        if len(lines) > 0:
+            height += (len(lines) - 1) * 4
 
         return "\n".join(lines) , height
     
@@ -416,8 +418,6 @@ class Editor():
         if orientation == 'bottom':
             y = self.image.height - height
             draw.multiline_text(xy=(padding, y), text=text, font= font_ttf)
-
-    
 #open and close editor
     def openMainFrame(self):
         """pack the main frame"""
@@ -426,6 +426,7 @@ class Editor():
     def backToGallery(self):
         """go back to the gallery"""
         self.frame.pack_forget()
+        self.baseImage = None
         self.image = None
         self.displayImage = None
 
