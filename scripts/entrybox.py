@@ -27,10 +27,11 @@ class EntryBox():
 
     def createBox(self):
         """creates the entry box and gets all variables ready"""
-        self.textBox = ctk.CTkEntry(master=self.master, font=self.default_font, width=self.width, height = self.height, bg_color=self.bg,fg_color=self.fg,border_color=self.border_colour,border_width=2, text_color=self.default_colour)
+        self.variable = tk.StringVar()
+        self.variable.trace_add('write', self.executeCommand)
+        self.textBox = ctk.CTkEntry(master=self.master, font=self.default_font, width=self.width, height = self.height, bg_color=self.bg,fg_color=self.fg,border_color=self.border_colour,border_width=2, text_color=self.default_colour, textvariable=self.variable)
         self.textBox.insert(0, self.default)
 
-        self.textBox.bind('<KeyPress>',self.executeCommand, add=True)
         self.textBox.bind('<KeyPress>',self.setUserTyped, add=True)
         self.textBox.bind('<FocusIn>', self.enterBox)
         self.textBox.bind('<FocusOut>', self.leaveBox)
@@ -39,7 +40,7 @@ class EntryBox():
         """set the user typed variable to true when the user types"""
         self.userTyped = True
 
-    def leaveBox(self,event):
+    def leaveBox(self,event=None):
         """trigger when the user clicks of the box"""
         if self.textBox.get() == '':
             self.userTyped = False
@@ -61,6 +62,6 @@ class EntryBox():
         if self.userTyped or (not self.userTyped and self.textBox.get()==''):
             self.textBox.configure(font=self.font)
 
-    def executeCommand(self,event):
+    def executeCommand(self,*event):
         if self.command:
             self.command()

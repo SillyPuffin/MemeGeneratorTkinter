@@ -21,8 +21,6 @@ class Editor():
         self.root = main.root
         self.main = main
 
-        self.templateIcons = []
-
         self.baseImage = None
         self.image = None
         self.displayImage = None
@@ -55,12 +53,13 @@ class Editor():
 
         self.loadImage(filename)
 
-    def LoadTemplate(self,templateName):
+    def LoadTemplate(self):
         """load a template image from the template directory"""
-        self.loadImage(self.templatePath + templateName)
+        filename = filedialog.askopenfilename(initialdir=self.templatePath,title='open an image', filetypes=[('all files','*.png *.jpg'),('PNG file','*.png'),('JPEG file','*.jpg')])
 
-    def openTemplateList(self):
-        """open the template selection list in the middle of the screen"""
+        print(f"loading {filename}")
+
+        self.loadImage(filename)
 
     def saveImage(self):
         """save the current image to the users meme folder"""
@@ -103,6 +102,7 @@ class Editor():
         self.imageWidth = self.main.screenSize[0] - self.leftWindow.winfo_width() - 20
         self.imageHeight = self.main.screenSize[1] - self.topFrame.winfo_height() - 20
 
+        self.size= 40
         self.baseImage = Image.open(path)
         self.updateImage()
         self.setDisplayImage()
@@ -121,6 +121,13 @@ class Editor():
         self.imageNameBox.textBox.insert(0, self.imageName)
         self.imageNameBox.userTyped = True
 
+        #reset the text boxes
+        self.topText.textBox.delete(0,tk.END)
+        self.topText.leaveBox()
+
+        self.bottomText.textBox.delete(0,tk.END)
+        self.bottomText.leaveBox()
+
         self.updateImageLabel()
 
     def saveNotification(self):
@@ -137,19 +144,6 @@ class Editor():
         """create the main frame"""
         self.frame = tk.Frame(master=self.main.root,background=colours.backgroundColour)
 
-    def createTemplateList(self):
-        """create the frame and icons for the template list offscreen"""
-        self.createTemplatedisplay()
-        self.createTemplateIcons()
-
-    def createTemplatedisplay(self):
-        """generate the frame and scroll bar elements in the template frame"""
-        pass
-
-    def createTemplateIcons(self):
-        """create the template icons and pack them"""
-        pass
-
     def createTopBar(self):
         """create the file bar and title bar along the top"""
         self.topFrame = ctk.CTkFrame(master=self.frame, fg_color=colours.backgroundHighlight, border_color=colours.backgroundAccent, border_width=2, corner_radius=0)
@@ -163,7 +157,7 @@ class Editor():
         loadButton = ctk.CTkButton(master=self.topFrame, text='Load', font=('calibri',20),width=1,corner_radius=4 ,fg_color=colours.backgroundHighlight, hover_color=colours.backgroundAccent,command=self.openImageFromFile)
         loadButton.pack(side='left',anchor='w',padx=(0,3),pady=4)
 
-        templatesButton = ctk.CTkButton(master=self.topFrame, text='Templates', font=('calibri',20),width=1,corner_radius=4 ,fg_color=colours.backgroundHighlight, hover_color=colours.backgroundAccent,command=self.openTemplateList)
+        templatesButton = ctk.CTkButton(master=self.topFrame, text='Templates', font=('calibri',20),width=1,corner_radius=4 ,fg_color=colours.backgroundHighlight, hover_color=colours.backgroundAccent,command=self.LoadTemplate)
         templatesButton.pack(side='left',anchor='w',pady=4)
 
         exitButton = ctk.CTkButton(master=self.topFrame, text='Exit', font=('calibri',20),width=1,corner_radius=4 ,fg_color=colours.backgroundHighlight, hover_color=colours.backgroundAccent,command=self.backToGallery)
@@ -228,7 +222,7 @@ class Editor():
             self.uifont = ('Microsoft Yahei UI Light',20)
 
         fontnames = list(self.fontList.keys())
-        fontsizeBoxWidth = 100
+        fontsizeBoxWidth = 125
         pad = 10
 
         self.fontChangeBox = ctk.CTkOptionMenu(self.fontFrame,height=50, width=self.entryWidth - fontsizeBoxWidth - pad, bg_color=colours.backgroundHighlight,button_color=colours.textboxShadow, button_hover_color=colours.textboxHover,dropdown_hover_color=colours.dropDownHover, dropdown_fg_color=colours.textboxBackground,dropdown_text_color=colours.typeText, fg_color=colours.textboxBackground,dropdown_font=self.uifont, font=self.uifont, text_color=colours.typeText
@@ -236,7 +230,7 @@ class Editor():
         self.fontChangeBox.pack(side='left',padx=(0,10))
 
         self.fontsizeBox = ctk.CTkComboBox(self.fontFrame, width= fontsizeBoxWidth, height=50, bg_color=colours.backgroundHighlight, button_color=colours.textboxShadow, button_hover_color=colours.textboxHover, dropdown_hover_color=colours.dropDownHover, dropdown_fg_color=colours.textboxBackground, dropdown_text_color=colours.typeText, fg_color=colours.textboxBackground, dropdown_font=('calibri',20), font=('calibri',20),text_color=colours.typeText,
-        values = [str(i) for i in range(2,47,2)], command=self.setFontSize)
+        values = [str(i) for i in range(40,81,2)], command=self.setFontSize)
         self.fontsizeBox.set(str(self.size)) 
         self.fontsizeBox.bind('<Return>',self.setFontSize)
         self.fontsizeBox.pack(side='left')
@@ -247,7 +241,7 @@ class Editor():
         self.topText = entrybox.EntryBox(self.textFrame, self.updateImage, self.entryWidth, 50, self.uifont,colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Top Text')
         self.topText.textBox.grid(row=3,column=0,pady=5)
 
-        self.bottomText = entrybox.EntryBox(self.textFrame, self.updateText, self.entryWidth, 50, self.uifont,colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Bottom Text')
+        self.bottomText = entrybox.EntryBox(self.textFrame, self.updateImage, self.entryWidth, 50, self.uifont,colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Bottom Text')
         self.bottomText.textBox.grid(row=4,column=0,pady=(5,10))
 
         bottomTextDiv = tk.Frame(self.textFrame, width=self.entryWidth, height = 2, background=colours.dividerColour)
@@ -268,7 +262,7 @@ class Editor():
 
     def createFontList(self):
         """generate a dictionary full of all the font types"""
-        self.size= 20
+        self.size= 40
 
         pathwalk = list(walk('Fonts/'))
 
@@ -288,12 +282,15 @@ class Editor():
     def switchFont(self,font):
         """switch the font"""
         self.uifont = (self.fontList[font], 20)
+        self.ActiveFontName = font
         
         self.fontChangeBox.configure(font=self.uifont, dropdown_font=self.uifont)
 
         self.topText.setFont(self.uifont)
 
         self.bottomText.setFont(self.uifont)
+
+        self.updateImage()
 
     def setFontSize(self, choice=None):
         """set the global font size for top and bottom text"""
@@ -302,22 +299,84 @@ class Editor():
         else:
             self.size = int(self.fontsizeBox.get())
 
-    def wrapText(self, text, font, size, pad = 10, anchor = 'top')->list | int:
-        """returns a list of lines as a strings as well as line height"""
+        self.updateImage()
+
+    def getWordWidth(self, new_font, word, draw)-> int:
+        """return the width of the word in pixels"""
+        font_ttf = new_font
+        bounding = draw.textbbox(xy=(0,0), text=word, font=font_ttf)
+        width = bounding[2] - bounding[0]
+
+        return int(width)
+
+    def wrapText(self, text, font, size, pad = 10)->list[str] | int:
+        """returns a string seperated by new line characters for each wrapped line as well as the height of the bounding box of the whole textbox"""
         lines = []
         current_line = []
 
         #draw image for getting the text width
         draw = ImageDraw.Draw(self.image)
-        maxWidth = self.image.width - pad*2
-        word = text
+        maxWidth = self.image.width - pad*2 #max width in pixels
+        words = text.split(" ")
 
         if font:#load the active font nmae
-            fontttf= ImageFont.truetype("Fonts/" + font + ".ttf", size = size)
+            font_ttf= ImageFont.truetype("Fonts/" + font + ".ttf", size = size)
         else:
-            fontttf = ImageFont.load_default()#if its not set load the default font
+            font_ttf = ImageFont.load_default()#if its not set load the default font
 
-        return lines 
+        for word in words:
+            #get the width of the word
+            width = self.getWordWidth(font_ttf, word, draw)
+
+            if width > maxWidth:
+                #add the word in individual letters until it is to big to fit
+                if current_line:
+                    lines.append(" ".join(current_line))
+                    current_line = []
+                temp_word = word
+
+                while temp_word:
+                    #finding the maximum amount of letters that will fit
+                    breaked = False
+                    for i in range(1, len(temp_word) + 1):
+                        part = temp_word[:i]
+                        partWidth = self.getWordWidth(font_ttf, part, draw)
+                        if partWidth > maxWidth:
+                            # If adding one more character exceeds max width add the last fitting letters
+                            print(temp_word[:i-1])
+                            lines.append(temp_word[:i-1])
+                            temp_word = temp_word[i-1:]  # Update remaining word
+                            print(f"cut tempword {temp_word}")
+                            breaked= True
+                            break
+                        
+                    #if the for loop ends and it hasn't appended the last part add it to a new line
+                    if not breaked:
+                        print(f"part : {part}")
+                        current_line.append(part)
+                        temp_word = ''
+            
+            else:
+                #check to see if the test line is larger than the max width
+                testLine = " ".join(current_line + [word])
+                width = self.getWordWidth(font_ttf, testLine, draw)
+                
+                if width <= maxWidth:
+                    current_line.append(word)
+                else:
+                    #commit the current line and start a new one
+                    lines.append(" ".join(current_line))
+                    current_line = [word]
+        
+        #add the last line if there are any words in it
+        if current_line:
+            lines.append(" ".join(current_line))
+
+        #find the height of a single line
+        bounding = draw.multiline_textbbox(xy=(0,0), text="\n".join(lines), font=font_ttf)
+        height = bounding[3] - bounding[1]
+
+        return "\n".join(lines) , height
     
     def updateImage(self, event=None):
         """reset the image and update the text displayed on it"""
@@ -335,14 +394,30 @@ class Editor():
         padding = 10
 
         #toptext
-        lines, height = self.wrapText(self.topText.textBox.get(), self.ActiveFontName, self.size, padding)
-        
+        if self.topText.userTyped:
+            lines, height = self.wrapText(self.topText.variable.get(), self.ActiveFontName, self.size, padding)
+            self.drawCaptionText(lines, self.ActiveFontName, self.size, padding, height, 'top')
 
         #bottomtext
+        if self.bottomText.userTyped:
+            lines, height = self.wrapText(self.bottomText.variable.get(), self.ActiveFontName, self.size, padding)
+            self.drawCaptionText(lines, self.ActiveFontName, self.size, padding, height, 'bottom')
 
-    def drawCaptionText(self, text, font, size, padding, orientation, height):
+    def drawCaptionText(self, text, font, size, padding, height, orientation):
         """draw the text on the top or bottom of the bed"""
-        pass
+        if font:#load the active font nmae
+            font_ttf= ImageFont.truetype("Fonts/" + font + ".ttf", size = size)
+        else:
+            font_ttf = ImageFont.load_default()#if its not set load the default font
+
+        draw = ImageDraw.Draw(self.image)
+
+        if orientation == 'top':
+            draw.multiline_text(xy=(padding, 0), text=text, font= font_ttf)
+        if orientation == 'bottom':
+            y = self.image.height - height
+            draw.multiline_text(xy=(padding, y), text=text, font= font_ttf)
+
     
 #open and close editor
     def openMainFrame(self):
