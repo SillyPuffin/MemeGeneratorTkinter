@@ -3,7 +3,7 @@ import customtkinter as ctk
 
 from tkinter import font, filedialog
 
-from PIL import Image, ImageTk, ImageFont
+from PIL import Image, ImageTk, ImageFont, ImageDraw
 
 from time import sleep
 
@@ -85,6 +85,18 @@ class Editor():
             sleep(0.75)
             failSavelabel.grid_forget()
 
+    def setDisplayImage(self):
+        """udate and resize the display image based on the width parameters"""
+        self.displayImage = self.image.copy()
+        self.displayImage.thumbnail((self.imageWidth, self.imageHeight))
+        self.displayImage = ImageTk.PhotoImage(self.displayImage)
+
+    def updateImageLabel(self):
+        """reset the image label to use the new display image"""
+        self.imageLabel.place_forget()
+        self.imageLabel = tk.Label(master= self.imageFrame, text='', image= self.displayImage, bg=colours.backgroundColour)
+        self.imageLabel.place(relx=0.5,rely=0.5,anchor='center')
+
     def loadImage(self,path):
         """load the image into the right window"""
         self.root.update_idletasks()
@@ -92,12 +104,8 @@ class Editor():
         self.imageHeight = self.main.screenSize[1] - self.topFrame.winfo_height() - 20
 
         self.baseImage = Image.open(path)
-        self.image = self.baseImage.copy()
-
-        self.displayImage = self.image.copy()
-        self.displayImage.thumbnail((self.imageWidth, self.imageHeight))
-        self.displayImage = ImageTk.PhotoImage(self.displayImage)
-
+        self.updateImage()
+        self.setDisplayImage()
 
         #showing the name of the file loaded on the editor title
         count = 1
@@ -113,9 +121,7 @@ class Editor():
         self.imageNameBox.textBox.insert(0, self.imageName)
         self.imageNameBox.userTyped = True
 
-        self.imageLabel.place_forget()
-        self.imageLabel = tk.Label(master= self.imageFrame, text='', image= self.displayImage, bg=colours.backgroundColour)
-        self.imageLabel.place(relx=0.5,rely=0.5,anchor='center')
+        self.updateImageLabel()
 
     def saveNotification(self):
         """little notifcation box pop-up to tell the user that they have saved the image"""
@@ -215,7 +221,7 @@ class Editor():
         self.fontFrame = tk.Frame(master=self.textFrame, bg=colours.backgroundHighlight)
         
         try:
-            self.ActiveFontName = list(self.fontList.items())[0][1]
+            self.ActiveFontName = list(self.fontList.keys())[0]
             self.uifont = (list(self.fontList.items())[0][1], 20)
         except:
             self.ActiveFontName = None
@@ -238,7 +244,7 @@ class Editor():
         #packing font seletcion grid
         self.fontFrame.grid(row= 2, column=0, pady=(10,5))
 
-        self.topText = entrybox.EntryBox(self.textFrame, self.updateText, self.entryWidth, 50, self.uifont,colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Top Text')
+        self.topText = entrybox.EntryBox(self.textFrame, self.updateImage, self.entryWidth, 50, self.uifont,colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Top Text')
         self.topText.textBox.grid(row=3,column=0,pady=5)
 
         self.bottomText = entrybox.EntryBox(self.textFrame, self.updateText, self.entryWidth, 50, self.uifont,colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Bottom Text')
@@ -272,13 +278,12 @@ class Editor():
         self.fontList = {}
 
         for name in fontnames:
+            #loading the font from the .ttf
             ctk.FontManager.load_font("Fonts/"+name)
+            #getting the name of the family of the font because its different to the name of the font file
             familyName = ImageFont.truetype("Fonts/"+name).getname()[0]
             self.fontList[name[:-4]] = familyName
             
-
-        print(self.fontList)
-
 #image editing logic
     def switchFont(self,font):
         """switch the font"""
@@ -297,14 +302,49 @@ class Editor():
         else:
             self.size = int(self.fontsizeBox.get())
 
-    def updateText(self):
-        """update the text on the image and change the display image to match"""
-        pass
+    def wrapText(self, text, font, size, pad = 10, anchor = 'top')->list | int:
+        """returns a list of lines as a strings as well as line height"""
+        lines = []
+        current_line = []
 
-    def drawText(self, text, y):
+        #draw image for getting the text width
+        draw = ImageDraw.Draw(self.image)
+        maxWidth = self.image.width - pad*2
+        word = text
+
+        if font:#load the active font nmae
+            fontttf= ImageFont.truetype("Fonts/" + font + ".ttf", size = size)
+        else:
+            fontttf = ImageFont.load_default()#if its not set load the default font
+
+        return lines 
+    
+    def updateImage(self, event=None):
+        """reset the image and update the text displayed on it"""
+        if self.baseImage:
+            self.image = self.baseImage.copy()
+
+            self.updateText()
+
+            self.setDisplayImage()
+            self.updateImageLabel()
+
+    def updateText(self):
+        """update the text on the image"""
+        
+        padding = 10
+
+        #toptext
+        lines, height = self.wrapText(self.topText.textBox.get(), self.ActiveFontName, self.size, padding)
+        
+
+        #bottomtext
+
+    def drawCaptionText(self, text, font, size, padding, orientation, height):
         """draw the text on the top or bottom of the bed"""
         pass
-#open and lcose editor
+    
+#open and close editor
     def openMainFrame(self):
         """pack the main frame"""
         self.frame.pack(fill=tk.BOTH,expand= True)
