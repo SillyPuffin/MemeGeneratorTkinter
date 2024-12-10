@@ -102,6 +102,8 @@ class Editor():
         self.imageWidth = self.main.screenSize[0] - self.leftWindow.winfo_width() - 20
         self.imageHeight = self.main.screenSize[1] - self.topFrame.winfo_height() - 20
 
+        self.aspectRatio = self.imageHeight / self.imageWidth
+
         self.size= 40
         self.baseImage = Image.open(path)
         self.updateImage()
@@ -123,7 +125,6 @@ class Editor():
 
         #reset the text boxes
         self.resetBoxes()
-
         self.updateImageLabel()
 
     def resetBoxes(self):
@@ -134,7 +135,9 @@ class Editor():
         self.bottomText.textBox.delete(0,tk.END)
         self.bottomText.leaveBox()
 
-        self.textColour = 'black'
+        self.resizex.set(str(self.imageWidth))
+        self.resizey.set(str(self.imageHeight))
+        
 
 
     def saveNotification(self):
@@ -264,16 +267,60 @@ class Editor():
         self.textblue = ColourBox(self.colourFrame,width, self.updateImage)
         self.textblue.grid(row=0,column=2,padx=0)
 
-        self.colourFrame.grid(row=5,column=0,pady=(5,10))
+        self.colourFrame.grid(row=5,column=0,pady=(10,10))
 
 
         bottomTextDiv = tk.Frame(self.textFrame, width=self.entryWidth, height = 2, background=colours.dividerColour)
         bottomTextDiv.grid(row=6, column=0)
 
-        ###Borders
-
+        ###########BORDERS
 
         ###resizing
+        self.resizeFrame = tk.Frame(master=self.leftWindow, background=colours.backgroundHighlight)
+        self.resizeFrame.pack()
+
+        #keeps the title and tick box
+        self.titleandboxFrame = tk.Frame(master=self.resizeFrame, background=colours.backgroundHighlight)
+
+        self.resizeTitle = tk.Label(master=self.titleandboxFrame, text='Resize', font=('Calibri',45), background=colours.backgroundHighlight, foreground=colours.Heading)
+        self.resizeTitle.pack(side='left')
+        
+        self.ticked = tk.IntVar()
+        self.ticked.set(1)
+        self.aspectTick = ctk.CTkCheckBox(master=self.titleandboxFrame, text='Maintain Aspect Ratio', variable=self.ticked)
+        self.aspectTick.pack(side='right')
+
+        self.titleandboxFrame.configure(width=self.entryWidth)
+        self.titleandboxFrame.grid(row=0,column=0, sticky='we')
+
+        topresizediv = tk.Frame(master=self.resizeFrame, background=colours.dividerColour,width=self.entryWidth, height=2)
+        topresizediv.grid(row=1,column=0)
+
+        self.resizex = tk.StringVar()
+        self.resizex.trace_add("write",self.updateResizeY)
+        self.resizey = tk.StringVar()
+        self.resizey.trace_add("write", self.updateResizeX)
+
+        width = (self.entryWidth - 10) //2
+        self.resizebbFrame = tk.Frame(master=self.resizeFrame, background=colours.backgroundHighlight)
+
+        self.widthBox = ctk.CTkEntry(master=self.resizebbFrame, height=50,width=width, textvariable=self.resizex, fg_color=colours.textboxBackground, bg_color=colours.backgroundHighlight, border_color=colours.textboxShadow, text_color='black', font=("calibri",20))
+        self.heightBox = ctk.CTkEntry(master=self.resizebbFrame, height=50,width=width, textvariable=self.resizey, fg_color=colours.textboxBackground, bg_color=colours.backgroundHighlight, border_color=colours.textboxShadow, text_color='black', font=("calibri",20))
+
+        self.resizex.set("0")
+        self.resizey.set("0")
+
+        self.widthBox.bind("<FocusOut>", self.LeaveX)
+        self.heightBox.bind("<FocusOut>", self.LeaveY)
+
+        self.widthBox.grid(row=0, column=0,padx=(0,10))
+        self.heightBox.grid(row=0, column=1)
+
+        self.resizebbFrame.grid(row=2, column= 0, stick='ew',pady=(10,10))
+
+        bottomresizediv =  tk.Frame(master=self.resizeFrame, background=colours.dividerColour,width=self.entryWidth, height=2)
+        bottomresizediv.grid(row=3,column=0)
+
 
     def createRightWindow(self):
         """generates the right window label for the image but keeps it empty"""
@@ -302,6 +349,30 @@ class Editor():
             self.fontList[name[:-4]] = familyName
             
 #image editing logic
+    def LeaveX(self, event=None):
+        """makes sure the value is valid when you leave the resize width box"""
+
+    def LeaveY(self, event=None):
+        """makes sure the value is correct when you leave the resize height box"""
+        
+    def updateResizeX(self, *event):
+        """updates the width of the resize value when height is changed"""
+        if self.ticked.get() == 1:
+            try:
+                value = int(self.resizey.get())
+                self.resizex.set(str(int(value/self.aspectRatio)))
+            except:
+                pass
+
+    def updateResizeY(self, *event):
+        """updates the height of the resize value when width is changed"""
+        if self.ticked.get() == 1:
+            try:
+                value = int(self.resizex.get())
+                self.resizey.set(str(int(value*self.aspectRatio)))
+            except:
+                pass
+
     def switchFont(self,font):
         """switch the font"""
         self.uifont = (self.fontList[font], 20)
@@ -451,15 +522,18 @@ class Editor():
         blue = self.getColour(self.textblue.col)
         textColour = (red,green,blue)
 
+
         if orientation == 'top':
             for i in range(len(text)):
-                x = float(padding)
+                length = draw.textlength(text=text[i], font=font_ttf)
+                x = self.image.width//2 - length//2
                 y = i * height
                 draw.text(xy=(x,y), text=text[i], font=font_ttf, fill=textColour)
         if orientation == 'bottom':
             startY = self.image.height - height * len(text)
             for i in range(len(text)):
-                x= padding
+                length = draw.textlength(text=text[i], font=font_ttf)
+                x = self.image.width//2 - length//2
                 y= startY + height * i
                 draw.text(xy=(x,y), font=font_ttf, text=text[i], fill=textColour)
 #open and close editor
