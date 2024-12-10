@@ -102,12 +102,14 @@ class Editor():
         self.imageWidth = self.main.screenSize[0] - self.leftWindow.winfo_width() - 20
         self.imageHeight = self.main.screenSize[1] - self.topFrame.winfo_height() - 20
 
-        self.aspectRatio = self.imageHeight / self.imageWidth
 
         self.size= 40
         self.baseImage = Image.open(path)
         self.updateImage()
         self.setDisplayImage()
+
+        self.aspectRatio = self.image.height / self.image.width
+        self.unsizedImage = self.baseImage.copy()
 
         #showing the name of the file loaded on the editor title
         count = 1
@@ -135,11 +137,9 @@ class Editor():
         self.bottomText.textBox.delete(0,tk.END)
         self.bottomText.leaveBox()
 
-        self.resizex.set(str(self.imageWidth))
-        self.resizey.set(str(self.imageHeight))
+        self.resizex.set(str(self.image.width))
+        self.resizey.set(str(self.image.height))
         
-
-
     def saveNotification(self):
         """little notifcation box pop-up to tell the user that they have saved the image"""
         self.notiFrame = ctk.CTkFrame(master=self.frame, corner_radius=0,border_width=2, border_color=colours.backgroundAccent, fg_color=colours.backgroundHighlight)
@@ -302,7 +302,7 @@ class Editor():
         self.resizey.trace_add("write", self.updateResizeX)
 
         width = (self.entryWidth - 10) //2
-        self.resizebbFrame = tk.Frame(master=self.resizeFrame, background=colours.backgroundHighlight)
+        self.resizebbFrame = tk.Frame(master=self.resizeFrame, background=colours.backgroundHighlight)#frame to hold the width and height entry boxes
 
         self.widthBox = ctk.CTkEntry(master=self.resizebbFrame, height=50,width=width, textvariable=self.resizex, fg_color=colours.textboxBackground, bg_color=colours.backgroundHighlight, border_color=colours.textboxShadow, text_color='black', font=("calibri",20))
         self.heightBox = ctk.CTkEntry(master=self.resizebbFrame, height=50,width=width, textvariable=self.resizey, fg_color=colours.textboxBackground, bg_color=colours.backgroundHighlight, border_color=colours.textboxShadow, text_color='black', font=("calibri",20))
@@ -318,9 +318,20 @@ class Editor():
 
         self.resizebbFrame.grid(row=2, column= 0, stick='ew',pady=(10,10))
 
-        bottomresizediv =  tk.Frame(master=self.resizeFrame, background=colours.dividerColour,width=self.entryWidth, height=2)
-        bottomresizediv.grid(row=3,column=0)
+        self.buttonFrame = tk.Frame(master=self.resizeFrame, background=colours.backgroundHighlight)
 
+        width = self.entryWidth - 10 - 100
+
+        self.resizeButton = ctk.CTkButton(master=self.buttonFrame,command=self.ResizeImage, fg_color=colours.button, bg_color=colours.backgroundHighlight, hover_color=colours.buttonHover, font=('calibri',30),text='Resize', text_color='white',corner_radius=8, height= 50, width=width)
+        self.resizeButton.pack(side='left')
+
+        self.unsizeButton = ctk.CTkButton(master=self.buttonFrame,command=self.revertResize, fg_color=colours.button, bg_color=colours.backgroundHighlight, hover_color=colours.buttonHover, font=('calibri',30),text='Revert', text_color='white',corner_radius=8, height= 50, width=100)
+        self.unsizeButton.pack(side='right')
+
+        self.buttonFrame.grid(row=3,column=0,pady=(0,10), sticky='we')
+
+        bottomresizediv =  tk.Frame(master=self.resizeFrame, background=colours.dividerColour,width=self.entryWidth, height=2)
+        bottomresizediv.grid(row=4,column=0)
 
     def createRightWindow(self):
         """generates the right window label for the image but keeps it empty"""
@@ -351,13 +362,25 @@ class Editor():
 #image editing logic
     def LeaveX(self, event=None):
         """makes sure the value is valid when you leave the resize width box"""
+        try:
+            value = self.resizex.get()
+            value = int(value)
+            self.resizex.set(str(value))
+        except:
+            self.resizex.set(str(self.image.width))
 
     def LeaveY(self, event=None):
         """makes sure the value is correct when you leave the resize height box"""
+        try:
+            value = self.resizey.get()
+            value = int(value)
+            self.resizey.set(str(value))
+        except:
+            self.resizey.set(str(self.image.height))
         
     def updateResizeX(self, *event):
         """updates the width of the resize value when height is changed"""
-        if self.ticked.get() == 1:
+        if self.ticked.get() == 1 and self.heightBox == self.resizebbFrame.focus_get():
             try:
                 value = int(self.resizey.get())
                 self.resizex.set(str(int(value/self.aspectRatio)))
@@ -366,12 +389,38 @@ class Editor():
 
     def updateResizeY(self, *event):
         """updates the height of the resize value when width is changed"""
-        if self.ticked.get() == 1:
+        if self.ticked.get() == 1 and self.widthBox == self.root.focus_get():
+            print("suspcious")
             try:
                 value = int(self.resizex.get())
                 self.resizey.set(str(int(value*self.aspectRatio)))
             except:
                 pass
+
+    def ResizeImage(self):
+        """resize the image using the values of the resize x and y"""
+        try:
+            x=self.resizex.get()
+            x= int(x)
+        except:
+            x = self.image.width
+
+        try:
+            y= self.resizey.get()
+            y = int(y)
+        except:
+            y = self.image.height
+
+        self.baseImage = self.baseImage.resize((x,y))
+        self.updateImage()
+
+    def revertResize(self):
+        """revert to original resolution"""
+        self.resizex.set(str(self.unsizedImage.width))
+        self.resizey.set(str(self.unsizedImage.height))
+
+        self.baseImage = self.unsizedImage.copy()
+        self.updateImage()
 
     def switchFont(self,font):
         """switch the font"""
