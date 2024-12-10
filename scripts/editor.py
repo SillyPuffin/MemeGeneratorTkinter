@@ -122,13 +122,17 @@ class Editor():
         self.imageNameBox.userTyped = True
 
         #reset the text boxes
+        self.resetBoxes()
+
+        self.updateImageLabel()
+
+    def resetBoxes(self):
+        """reset all the default values on the left window"""
         self.topText.textBox.delete(0,tk.END)
         self.topText.leaveBox()
 
         self.bottomText.textBox.delete(0,tk.END)
         self.bottomText.leaveBox()
-
-        self.updateImageLabel()
 
     def saveNotification(self):
         """little notifcation box pop-up to tell the user that they have saved the image"""
@@ -370,14 +374,10 @@ class Editor():
             lines.append(" ".join(current_line))
 
         #find the height of a single line
-        ascent, descent = font_ttf.getmetrics()#get the height of the highest letters like b and lowest like g form the baseline
-        (width, baseline), (offset_x, offset_y) = font_ttf.font.getsize('A')
+        ascent, descent = font_ttf.getmetrics()
+        height = ascent + descent
 
-        height = (ascent) * len(lines)
-        if len(lines) > 0:
-            height += (len(lines) - 1) * 4
-
-        return "\n".join(lines) , height
+        return lines , height
     
     def updateImage(self, event=None):
         """reset the image and update the text displayed on it"""
@@ -414,10 +414,16 @@ class Editor():
         draw = ImageDraw.Draw(self.image)
 
         if orientation == 'top':
-            draw.multiline_text(xy=(padding, 0), text=text, font= font_ttf)
+            for i in range(len(text)):
+                x = float(padding)
+                y = i * height
+                draw.text(xy=(x,y), text=text[i], font=font_ttf)
         if orientation == 'bottom':
-            y = self.image.height - height
-            draw.multiline_text(xy=(padding, y), text=text, font= font_ttf)
+            startY = self.image.height - height * len(text)
+            for i in range(len(text)):
+                x= padding
+                y= startY + height * i
+                draw.text(xy=(x,y), font=font_ttf, text=text[i])
 #open and close editor
     def openMainFrame(self):
         """pack the main frame"""
