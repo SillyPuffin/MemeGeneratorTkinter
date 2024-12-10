@@ -380,7 +380,7 @@ class Editor():
         
     def updateResizeX(self, *event):
         """updates the width of the resize value when height is changed"""
-        if self.ticked.get() == 1 and self.heightBox == self.resizebbFrame.focus_get():
+        if self.ticked.get() == 1 and self.heightBox._entry == self.resizebbFrame.focus_get():
             try:
                 value = int(self.resizey.get())
                 self.resizex.set(str(int(value/self.aspectRatio)))
@@ -389,7 +389,7 @@ class Editor():
 
     def updateResizeY(self, *event):
         """updates the height of the resize value when width is changed"""
-        if self.ticked.get() == 1 and self.widthBox == self.root.focus_get():
+        if self.ticked.get() == 1 and self.widthBox._entry == self.root.focus_get():
             print("suspcious")
             try:
                 value = int(self.resizex.get())
