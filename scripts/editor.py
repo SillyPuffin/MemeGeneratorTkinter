@@ -134,6 +134,9 @@ class Editor():
         self.bottomText.textBox.delete(0,tk.END)
         self.bottomText.leaveBox()
 
+        self.textColour = 'black'
+
+
     def saveNotification(self):
         """little notifcation box pop-up to tell the user that they have saved the image"""
         self.notiFrame = ctk.CTkFrame(master=self.frame, corner_radius=0,border_width=2, border_color=colours.backgroundAccent, fg_color=colours.backgroundHighlight)
@@ -228,6 +231,7 @@ class Editor():
         fontnames = list(self.fontList.keys())
         fontsizeBoxWidth = 125
         pad = 10
+        self.textColour = 'black'
 
         self.fontChangeBox = ctk.CTkOptionMenu(self.fontFrame,height=50, width=self.entryWidth - fontsizeBoxWidth - pad, bg_color=colours.backgroundHighlight,button_color=colours.textboxShadow, button_hover_color=colours.textboxHover,dropdown_hover_color=colours.dropDownHover, dropdown_fg_color=colours.textboxBackground,dropdown_text_color=colours.typeText, fg_color=colours.textboxBackground,dropdown_font=self.uifont, font=self.uifont, text_color=colours.typeText
         ,values=fontnames, command=self.switchFont)
@@ -246,10 +250,25 @@ class Editor():
         self.topText.textBox.grid(row=3,column=0,pady=5)
 
         self.bottomText = entrybox.EntryBox(self.textFrame, self.updateImage, self.entryWidth, 50, self.uifont,colours.textboxBackground,colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Bottom Text')
-        self.bottomText.textBox.grid(row=4,column=0,pady=(5,10))
+        self.bottomText.textBox.grid(row=4,column=0,pady=(5,0))
+
+        #font colour
+        self.colourFrame = tk.Frame(self.textFrame, background=colours.backgroundHighlight)
+
+        width = (self.entryWidth - 20)/3
+
+        self.textred = ColourBox(self.colourFrame,width, self.updateImage)
+        self.textred.grid(row=0,column=0,padx=(0,10))
+        self.textgreen = ColourBox(self.colourFrame,width, self.updateImage)
+        self.textgreen.grid(row=0,column=1,padx=(0,10))
+        self.textblue = ColourBox(self.colourFrame,width, self.updateImage)
+        self.textblue.grid(row=0,column=2,padx=0)
+
+        self.colourFrame.grid(row=5,column=0,pady=(5,10))
+
 
         bottomTextDiv = tk.Frame(self.textFrame, width=self.entryWidth, height = 2, background=colours.dividerColour)
-        bottomTextDiv.grid(row=5, column=0)
+        bottomTextDiv.grid(row=6, column=0)
 
         ###Borders
 
@@ -404,6 +423,19 @@ class Editor():
             lines, height = self.wrapText(self.bottomText.variable.get(), self.ActiveFontName, self.size, padding)
             self.drawCaptionText(lines, self.ActiveFontName, self.size, padding, height, 'bottom')
 
+    def getColour(self, variable):
+        """return the colour of the text variable if it is valid else 0"""
+        value = variable.get()
+
+        try:
+            value = int(value)
+            if value < 0 or value > 255:
+                return 0
+            else:
+                return value
+        except ValueError:
+            return 0
+
     def drawCaptionText(self, text, font, size, padding, height, orientation):
         """draw the text on the top or bottom of the bed"""
         if font:#load the active font nmae
@@ -413,17 +445,23 @@ class Editor():
 
         draw = ImageDraw.Draw(self.image)
 
+        #get the colour from the rgb text boxes
+        red = self.getColour(self.textred.col)
+        green = self.getColour(self.textgreen.col)
+        blue = self.getColour(self.textblue.col)
+        textColour = (red,green,blue)
+
         if orientation == 'top':
             for i in range(len(text)):
                 x = float(padding)
                 y = i * height
-                draw.text(xy=(x,y), text=text[i], font=font_ttf)
+                draw.text(xy=(x,y), text=text[i], font=font_ttf, fill=textColour)
         if orientation == 'bottom':
             startY = self.image.height - height * len(text)
             for i in range(len(text)):
                 x= padding
                 y= startY + height * i
-                draw.text(xy=(x,y), font=font_ttf, text=text[i])
+                draw.text(xy=(x,y), font=font_ttf, text=text[i], fill=textColour)
 #open and close editor
     def openMainFrame(self):
         """pack the main frame"""
@@ -442,3 +480,40 @@ class Editor():
         #putting the gallery back on the screen
         self.main.gallery.repackFrame()
 
+
+#colour box for the rgb values
+class ColourBox:
+    def __init__(self, master, width, command):
+        self.col = tk.StringVar()
+        self.col.set("0")
+        self.command = command
+        self.col.trace_add("write", self.execCommand)
+        self.box = ctk.CTkEntry(master=master, width=width, height = 50, font=('calibri',20),textvariable=self.col, border_width=2, bg_color=colours.backgroundHighlight,fg_color=colours.textboxBackground, border_color=colours.textboxShadow, text_color='black')
+        
+        self.box.bind('<FocusOut>',self.Leave)
+
+    def Leave(self,event):
+        """set the value to 0 if it is too low or 255 if too hight"""
+        try:
+            value = self.col.get()
+            value = int(value)
+
+            if value < 0:
+                value = 0
+            elif value > 255:
+                value = 255
+        except:
+            value = 0
+        self.col.set(str(value))
+
+    def execCommand(self,*event):
+        """run the supplied command"""
+        self.command()
+
+    def pack(self):
+        """pacl the box"""
+        self.box.pack()
+
+    def grid(self, row=0, column=0, padx=None, pady=None):
+        """grid the box"""
+        self.box.grid(row=row, column=column, padx=padx,pady=pady)
