@@ -38,6 +38,7 @@ class Editor():
         """loads the image supplied in the path and opens the editor or opens an empty image"""
         self.currentAccount = self.main.currentAccount
 
+        self.resetBoxes()
         self.openMainFrame()
 
         if path:
@@ -131,15 +132,24 @@ class Editor():
 
     def resetBoxes(self):
         """reset all the default values on the left window"""
-        self.topText.textBox.delete(0,tk.END)
+        self.topText.variable.set("")
         self.topText.leaveBox()
 
-        self.bottomText.textBox.delete(0,tk.END)
+        self.bottomText.variable.set("")
         self.bottomText.leaveBox()
 
-        self.resizex.set(str(self.image.width))
-        self.resizey.set(str(self.image.height))
-        
+        self.imageNameBox.variable.set("")
+        self.imageNameBox.leaveBox()
+
+        self.root.focus()
+
+        if self.image:
+            self.resizex.set(str(self.image.width))
+            self.resizey.set(str(self.image.height))
+        else:
+            self.resizex.set(str(0))
+            self.resizey.set(str(0))
+            
     def saveNotification(self):
         """little notifcation box pop-up to tell the user that they have saved the image"""
         self.notiFrame = ctk.CTkFrame(master=self.frame, corner_radius=0,border_width=2, border_color=colours.backgroundAccent, fg_color=colours.backgroundHighlight)
@@ -518,6 +528,22 @@ class Editor():
 
         return lines , height
     
+    def drawTopBorder(self, height, padding, lines):
+        """draw a top padding border to fit the lines of text, is there is no text it draws a border the height of a single line"""
+        #if you should draw borders
+        #if lines != []:
+        #draw top bar with padding to cover len(lines)
+        #else
+        #draw top bar with height equal to heigh
+
+    def drawBottomBorder(self, height, padding, lines):
+        """draw a bottom padding border to fit the lines of text, is there is no text it draws a border the height of a single line"""
+        #if you should draw borders
+        #if lines != []:
+        #draw bottom bar with padding to cover len(lines)
+        #else
+        #draw bottom bar with height equal to heigh
+
     def updateImage(self, event=None):
         """reset the image and update the text displayed on it"""
         if self.baseImage:
@@ -532,16 +558,32 @@ class Editor():
         """update the text on the image"""
         
         padding = 10
+        toplines = []
+        bottomlines = []
 
+        #split text
         #toptext
         if self.topText.userTyped:
-            lines, height = self.wrapText(self.topText.variable.get(), self.ActiveFontName, self.size, padding)
-            self.drawCaptionText(lines, self.ActiveFontName, self.size, padding, height, 'top')
-
+            text = self.topText.variable.get()
+        else:
+            text = ''
+        toplines, height = self.wrapText(text, self.ActiveFontName, self.size, padding)
+        
         #bottomtext
         if self.bottomText.userTyped:
-            lines, height = self.wrapText(self.bottomText.variable.get(), self.ActiveFontName, self.size, padding)
-            self.drawCaptionText(lines, self.ActiveFontName, self.size, padding, height, 'bottom')
+            text = self.bottomText.variable.get()
+        else:
+            text=''
+        bottomlines, height = self.wrapText(text, self.ActiveFontName, self.size, padding)
+
+        self.drawTopBorder(height, padding, toplines)
+        self.drawBottomBorder(height, padding, bottomlines)
+
+        #drawing text
+        if self.topText.userTyped:
+            self.drawCaptionText(toplines, self.ActiveFontName, self.size, padding, height, 'top')
+        if self.bottomText.userTyped:
+            self.drawCaptionText(bottomlines, self.ActiveFontName, self.size, padding, height, 'bottom')
 
     def getColour(self, variable):
         """return the colour of the text variable if it is valid else 0"""
@@ -599,10 +641,10 @@ class Editor():
 
         #readying the gallery to be displayed again
         self.main.gallery.createMemeIcons(database.getFolderPath(self.currentAccount, self.main.DatabasePath))
-        self.main.gallery.packMemeIcons()
+        if self.main.gallery.memeIcons != []:
+            self.main.gallery.packMemeIcons()
         #putting the gallery back on the screen
         self.main.gallery.repackFrame()
-
 
 #colour box for the rgb values
 class ColourBox:

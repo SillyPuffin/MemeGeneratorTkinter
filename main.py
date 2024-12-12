@@ -19,13 +19,13 @@ class Main():
 
         #go to login screen
         self.login = LoginScreen(self)  
-        #self.login.setupLoginScreen()
+        self.login.setupLoginScreen()
 
         #create gallery class
         self.gallery = Gallery(self)
 
-        self.currentAccount=1
-        self.gallery.createGalleryScreen(1)
+        # self.currentAccount=1
+        # self.gallery.createGalleryScreen(1)
 
         #create the editor class
         self.editor = Editor(self)
