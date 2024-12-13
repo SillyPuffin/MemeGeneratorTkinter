@@ -47,7 +47,6 @@ class Gallery():
     def createMainFrame(self):
         """create the main frame all the gallery elements are contatined inside"""
         self.frame = tk.Frame(self.root,bg=colours.backgroundColour)
-        self.frame.pack(fill=tk.BOTH, expand= True)
 
     def buildGallery(self,id):
         """create all the elements in the main screen"""

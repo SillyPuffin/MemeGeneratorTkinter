@@ -284,6 +284,31 @@ class Editor():
         bottomTextDiv.grid(row=6, column=0)
 
         ###########BORDERS
+        self.borderFrame = tk.Frame(master=self.leftWindow, background=colours.backgroundHighlight)
+        self.borderFrame.pack()
+        
+        bordertitle = ctk.CTkLabel(master=self.borderFrame, font=('calibri',45), text='Borders', fg_color=colours.backgroundHighlight, bg_color=colours.backgroundHighlight, text_color=colours.Heading)
+        bordertitle.grid(row=0,column=0, sticky='w')
+
+        topborderdiv = tk.Frame(master=self.borderFrame, bg=colours.dividerColour, height=2,width=self.entryWidth)
+        topborderdiv.grid(row=1, column=0)
+
+        tickframe = tk.Frame(master=self.borderFrame, bg=colours.backgroundHighlight)
+
+        self.toptickvar = tk.IntVar()
+        self.toptickvar.trace_add("write",self.updateImage)
+        self.topbordertick = ctk.CTkCheckBox(master=tickframe, text='Top Border', font=("calibri",20), variable=self.toptickvar)
+        self.topbordertick.pack(side='left')
+
+        self.bottomtickvar = tk.IntVar()
+        self.bottomtickvar.trace_add("write", self.updateImage)
+        self.bottombordertick = ctk.CTkCheckBox(master=tickframe, text='Bottom Border', font=("calibri",20), variable=self.bottomtickvar)
+        self.bottombordertick.pack(side='right')
+
+        tickframe.grid(row=2, column=0, sticky='we', pady=10)
+
+        bottomborderdiv = tk.Frame(master=self.borderFrame, bg=colours.dividerColour, height=2,width=self.entryWidth)
+        bottomborderdiv.grid(row=3, column=0)
 
         ###resizing
         self.resizeFrame = tk.Frame(master=self.leftWindow, background=colours.backgroundHighlight)
@@ -400,7 +425,6 @@ class Editor():
     def updateResizeY(self, *event):
         """updates the height of the resize value when width is changed"""
         if self.ticked.get() == 1 and self.widthBox._entry == self.root.focus_get():
-            print("suspcious")
             try:
                 value = int(self.resizex.get())
                 self.resizey.set(str(int(value*self.aspectRatio)))
@@ -421,7 +445,7 @@ class Editor():
         except:
             y = self.image.height
 
-        self.baseImage = self.baseImage.resize((x,y))
+        self.baseImage = self.baseImage.resize((x,y), Image.Resampling.NEAREST)
         self.updateImage()
 
     def revertResize(self):
@@ -528,23 +552,33 @@ class Editor():
 
         return lines , height
     
-    def drawTopBorder(self, height, padding, lines):
+    def drawTopBorder(self, height, lines):
         """draw a top padding border to fit the lines of text, is there is no text it draws a border the height of a single line"""
-        #if you should draw borders
-        #if lines != []:
-        #draw top bar with padding to cover len(lines)
-        #else
-        #draw top bar with height equal to heigh
+        if self.topbordertick.get():
+            if lines != []:
+                borderheight = height * len(lines) + 4
+            else:
+                borderheight = height + 4
+            
+            tempimage = Image.new("RGB", (self.image.width, self.image.height+borderheight), (255,255,255))
+            tempimage.paste(self.image, (0, borderheight))
 
-    def drawBottomBorder(self, height, padding, lines):
+            self.image = tempimage.copy()
+
+    def drawBottomBorder(self, height, lines):
         """draw a bottom padding border to fit the lines of text, is there is no text it draws a border the height of a single line"""
-        #if you should draw borders
-        #if lines != []:
-        #draw bottom bar with padding to cover len(lines)
-        #else
-        #draw bottom bar with height equal to heigh
+        if self.bottombordertick.get():
+            if lines != []:
+                borderheight = height * len(lines) + 4
+            else:
+                borderheight = height + 4
+            
+            tempimage = Image.new("RGB", (self.image.width, self.image.height+borderheight), (255,255,255))
+            tempimage.paste(self.image, (0, 0))
 
-    def updateImage(self, event=None):
+            self.image = tempimage.copy()
+
+    def updateImage(self, *event):
         """reset the image and update the text displayed on it"""
         if self.baseImage:
             self.image = self.baseImage.copy()
@@ -576,8 +610,8 @@ class Editor():
             text=''
         bottomlines, height = self.wrapText(text, self.ActiveFontName, self.size, padding)
 
-        self.drawTopBorder(height, padding, toplines)
-        self.drawBottomBorder(height, padding, bottomlines)
+        self.drawTopBorder(height, toplines)
+        self.drawBottomBorder(height, bottomlines)
 
         #drawing text
         if self.topText.userTyped:
@@ -598,13 +632,19 @@ class Editor():
         except ValueError:
             return 0
 
-    def drawCaptionText(self, text, font, size, padding, height, orientation):
-        """draw the text on the top or bottom of the bed"""
+    def loadFont(self, font, size) -> ImageFont:
+        """return the font using the specified size and font"""
         if font:#load the active font nmae
             font_ttf= ImageFont.truetype("Fonts/" + font + ".ttf", size = size)
         else:
             font_ttf = ImageFont.load_default()#if its not set load the default font
 
+        return font_ttf
+
+    def drawCaptionText(self, text, font, size, padding, height, orientation):
+        """draw the text on the top or bottom of the bed"""
+        
+        font_ttf = self.loadFont(font, size)
         draw = ImageDraw.Draw(self.image)
 
         #get the colour from the rgb text boxes

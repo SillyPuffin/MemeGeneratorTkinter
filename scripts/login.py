@@ -41,6 +41,8 @@ class LoginScreen():
         #username#####
         self.user = entrybox.EntryBox(masterFrame, None, self.entryWidth, self.entryHeight, ('microsoft Yahei ui light',30),colours.textboxBackground, colours.backgroundHighlight, colours.textboxShadow, colours.typeText, colours.defaultText, 'Username')
         self.user.textBox.grid(row=2,column = 0, sticky="S",pady=5,padx=15)
+
+        self.user.textBox.bind("<Return>", self.switchFocusToPass)
         
         #password entry and show password button frame########
         passwordFrame = tk.Frame(master=masterFrame, background=colours.backgroundHighlight)
@@ -238,13 +240,14 @@ class LoginScreen():
                 #show a label to let them know that they have logged in
                 ctk.CTkLabel(master=self.loginForm, text= "Logging In ...", text_color="green", font=('calibri',15)).grid(column = 0,row=7,pady=(0,4))
                 self.root.update()
-                sleep(1)
+                self.main.gallery.createGalleryScreen(id)
+                sleep(0.5)
 
                 #tell the main class the id of the current account
                 self.main.currentAccount = id
                 self.DestroyMainFrame()
                 #create the gallery view to load into
-                self.main.gallery.createGalleryScreen(id)
+                self.main.gallery.repackFrame()
 
             elif id == None:
                 #label to show that logging in failed
@@ -273,6 +276,10 @@ class LoginScreen():
             entry.delete(0,tk.END)
             entry.configure(text_color=colours.typeText)
     
+    def switchFocusToPass(self, event=None):
+        """switch the focus to the password bar"""
+        self.root.focus()
+        self.password.focus()
 #placing and removing defualt text for password
     def OnExitPass(self,event):
         """Re-enter default password text when unfocusing the textbox"""
