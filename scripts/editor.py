@@ -102,7 +102,7 @@ class Editor():
         self.root.update_idletasks()
         self.imageWidth = self.main.screenSize[0] - self.leftWindow.winfo_width() - 20
         self.imageHeight = self.main.screenSize[1] - self.topFrame.winfo_height() - 20
-
+        self.resetBoxes()
 
         self.size= 40
         self.baseImage = Image.open(path)
@@ -122,12 +122,10 @@ class Editor():
         self.title.configure(text=f'Editor - {self.imageName}')
         #putting in the meme name box the loaded image name
         self.imageNameBox.textBox.configure(text_color=colours.typeText)
-        self.imageNameBox.textBox.delete(0,tk.END)
-        self.imageNameBox.textBox.insert(0, self.imageName)
+        self.imageNameBox.variable.set(f"{self.imageName}")
         self.imageNameBox.userTyped = True
 
         #reset the text boxes
-        self.resetBoxes()
         self.updateImageLabel()
 
     def resetBoxes(self):
@@ -514,7 +512,6 @@ class Editor():
 
                 while temp_word:
                     #finding the maximum amount of letters that will fit
-                    print("mustard")
                     breaked = False
                     for i in range(1, len(temp_word) + 1):
                         part = temp_word[:i]
