@@ -221,8 +221,9 @@ class Gallery():
 
     def openImageFromFile(self):
         """opens a filedialog box to get an image location to load into the editor"""
-        filename = filedialog.askopenfilename(title='open an image', filetypes=[('all files','*.png *.jpg'),('PNG file','*.png'),('JPEG file','*.jpg')])
+        filename = filedialog.askopenfilename(initialdir=database.getFolderPath(self.id, self.DatabasePath),title='open an image', filetypes=[('all files','*.png *.jpg'),('PNG file','*.png'),('JPEG file','*.jpg')])
 
-        self.frame.pack_forget()
-        print(f'loading {filename}')
-        self.main.editor.openImage(filename)
+        if filename != '':
+            self.frame.pack_forget()
+            print(f'loading {filename}')
+            self.main.editor.openImage(filename)

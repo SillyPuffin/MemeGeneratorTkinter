@@ -514,15 +514,21 @@ class Editor():
 
                 while temp_word:
                     #finding the maximum amount of letters that will fit
+                    print("mustard")
                     breaked = False
                     for i in range(1, len(temp_word) + 1):
                         part = temp_word[:i]
                         partWidth = self.getWordWidth(font_ttf, part, draw)
-                        if partWidth > maxWidth:
+                        if partWidth > maxWidth and len(part) > 1:
                             # If adding one more character exceeds max width add the last fitting letters
                             lines.append(temp_word[:i-1])
                             temp_word = temp_word[i-1:]  # Update remaining word
                             breaked= True
+                            break
+                        elif partWidth > maxWidth and len(part) == 1:
+                            lines.append(temp_word[0])
+                            temp_word = temp_word[i:]
+                            breaked=True
                             break
                         
                     #if the for loop ends and it hasn't appended the last part add it to a new line
@@ -560,6 +566,9 @@ class Editor():
             else:
                 borderheight = height + 4
             
+            if borderheight > self.baseImage.height:
+                borderheight = self.baseImage.height
+
             tempimage = Image.new("RGB", (self.image.width, self.image.height+borderheight), (255,255,255))
             tempimage.paste(self.image, (0, borderheight))
 
@@ -572,6 +581,9 @@ class Editor():
                 borderheight = height * len(lines) + 4
             else:
                 borderheight = height + 4
+
+            if borderheight > self.baseImage.height:
+                borderheight = self.baseImage.height
             
             tempimage = Image.new("RGB", (self.image.width, self.image.height+borderheight), (255,255,255))
             tempimage.paste(self.image, (0, 0))
@@ -582,7 +594,6 @@ class Editor():
         """reset the image and update the text displayed on it"""
         if self.baseImage:
             self.image = self.baseImage.copy()
-
             self.updateText()
 
             self.setDisplayImage()
