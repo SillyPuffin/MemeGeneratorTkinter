@@ -117,7 +117,7 @@ class Editor():
 
         #showing the name of the file loaded on the editor title
         count = 1
-        while path[-count] != '/':
+        while path[-count] != '/':#getting the filename from a path so cutting at the first slash from the right.
             count+=1
 
         self.imageName = path[-(count-1):-4]
@@ -403,7 +403,8 @@ class Editor():
             value = int(value)
             self.resizex.set(str(value))
         except:
-            self.resizex.set(str(self.image.width))
+            self.resizex.set(str(self.baseImage.width))
+            self.resizey.set(str(self.baseImage.height))
 
     def LeaveY(self, event=None):
         """makes sure the value is correct when you leave the resize height box"""
@@ -412,7 +413,8 @@ class Editor():
             value = int(value)
             self.resizey.set(str(value))
         except:
-            self.resizey.set(str(self.image.height))
+            self.resizey.set(str(self.baseImage.height))
+            self.resizex.set(str(self.baseImage.width))
         
     def updateResizeX(self, *event):
         """updates the width of the resize value when height is changed"""
