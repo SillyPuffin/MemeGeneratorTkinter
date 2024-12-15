@@ -32,6 +32,19 @@ def ResetDatabases(databasename):
     conn.commit()
     conn.close()
 
+def GenDatabase(databasename):
+    """if the database given does not exist create it"""
+    conn = sqlite3.connect(databasename)
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+    tables = cursor.fetchall()
+
+    conn.close()
+
+    if not tables:
+        ResetDatabases(databasename)
+
 def CreateCursor(database):
     """creates and returns a connection and cursor for the database supplied"""
     conn = sqlite3.connect(database)

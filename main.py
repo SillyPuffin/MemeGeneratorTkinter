@@ -12,6 +12,7 @@ class Main():
 
         #database variables
         self.DatabasePath = "databases/userdata.db"
+        database.GenDatabase(self.DatabasePath)
         
         #creating window
         self.screenSize = self.GetScreenSize()
@@ -23,9 +24,6 @@ class Main():
 
         #create gallery class
         self.gallery = Gallery(self)
-
-        # self.currentAccount=1
-        # self.gallery.createGalleryScreen(1)
 
         #create the editor class
         self.editor = Editor(self)
