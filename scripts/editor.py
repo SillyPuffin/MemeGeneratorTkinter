@@ -638,8 +638,10 @@ class Editor():
 
         try:
             value = int(value)
-            if value < 0 or value > 255:
+            if value < 0:
                 return 0
+            elif value > 255:
+                return 255
             else:
                 return value
         except ValueError:
@@ -722,7 +724,7 @@ class ColourBox:
                 value = 255
         except:
             value = 0
-        self.col.set(str(value))
+        self.col.set(str(value))#colour variable
 
     def execCommand(self,*event):
         """run the supplied command"""
