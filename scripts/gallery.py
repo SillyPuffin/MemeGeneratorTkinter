@@ -58,7 +58,7 @@ class Gallery():
 
     def createTopBar(self):
         """Creates the top UI bar where the title and buttons are located"""
-        self.TopFrame = ctk.CTkFrame(master = self.frame,bg_color=colours.backgroundHighlight, border_color=colours.backgroundHighlight, border_width=2,corner_radius=0)
+        self.TopFrame = ctk.CTkFrame(master = self.frame,fg_color=colours.backgroundHighlight, border_color=colours.backgroundHighlight, border_width=2,corner_radius=0)
         self.TopFrame.pack_propagate(False)
         self.TopFrame.pack(side='top',fill=tk.X)
 
