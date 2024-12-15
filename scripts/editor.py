@@ -145,8 +145,8 @@ class Editor():
         self.root.focus()
 
         if self.image:
-            self.resizex.set(str(self.image.width))
-            self.resizey.set(str(self.image.height))
+            self.resizex.set(str(self.baseImage.width))
+            self.resizey.set(str(self.baseImage.height))
         else:
             self.resizex.set(str(0))
             self.resizey.set(str(0))
