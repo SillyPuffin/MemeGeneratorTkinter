@@ -168,7 +168,7 @@ class Gallery():
     def tryDeleteAccount(self):
         if not self.pause:
             self.pause = True
-            confirm = confirmbox.ConfirmBox('Are you Sure?', self.frame, self.deleteAccount, self.unPause)
+            confirm = confirmbox.ConfirmBox('Delete Account and Files?', self.frame, self.deleteAccount, self.unPause)
 
     def deleteAccount(self):
         "deletes the account currently active"
@@ -182,7 +182,7 @@ class Gallery():
         """opens the diaglog box to confirm deleteAll and pauses the menus"""
         if not self.pause:
             self.pause = True
-            confirm = confirmbox.ConfirmBox('Are you sure?',self.frame,self.removeFiles,self.unPause)
+            confirm = confirmbox.ConfirmBox('Delete All Files?',self.frame,self.removeFiles,self.unPause)
         
     def unPause(self):
         """unpauses if confirmbox is cancelled"""

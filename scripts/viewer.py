@@ -70,18 +70,20 @@ class Viewer():
         self.TopFrame.pack(side='top',fill=tk.X)
 
         #backbutton
-        backButton = ctk.CTkButton(master=self.TopFrame, text='back',font=("calibri",25),hover_color=colours.buttonHover,fg_color=colours.button,command=self.backToGallery)
+        self.crossicon = ctk.CTkImage(Image.open("Graphics/close.png"),None,(30,30))
+        backButton = ctk.CTkButton(master=self.TopFrame, text='',image=self.crossicon, width=0,font=("calibri",25),hover_color=colours.redButton,fg_color=colours.backgroundColour,command=self.backToGallery)
         backButton.pack(side=tk.RIGHT,padx=10,pady=10,anchor='ne')
 
         #delete
-        deleteButton = ctk.CTkButton(master=self.TopFrame, text='Delete', font=('calibri',25),command=self.deleteImage,fg_color=colours.redButton,hover_color=colours.redButtonHover)
+        self.trashicon = ctk.CTkImage(Image.open("Graphics/Trash.png"),None,(30,30))
+        deleteButton = ctk.CTkButton(master=self.TopFrame, text='',image=self.trashicon, width=0, font=('calibri',25),command=self.deleteImage,fg_color=colours.redButton,hover_color=colours.redButtonHover)
         deleteButton.pack(side=tk.LEFT, padx=10,pady=10, anchor='nw')
 
         #share button
-        self.shareButton = ctk.CTkButton(master=self.TopFrame, text='Share',font=("calibri",25),hover_color=colours.buttonHover,fg_color=colours.button,command=self.sharer.openSharer)
-        self.shareButton.pack(side=tk.LEFT,padx=10,pady=10,anchor='nw')
+        self.shareIcon = ctk.CTkImage(Image.open("Graphics/share.png"),None,(30,30))
+        self.shareButton = ctk.CTkButton(master=self.TopFrame, text='',image=self.shareIcon, width=0, font=("calibri",25),hover_color=colours.buttonHover,fg_color=colours.button,command=self.sharer.openSharer)
+        self.shareButton.pack(side=tk.LEFT,pady=10,anchor='nw')
  
-
         self.TopFrame.update()
         self.topHeight = backButton.winfo_reqheight() + 10*2 #used to calculate the height of the top bar
 
