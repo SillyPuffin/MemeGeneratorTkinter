@@ -1,7 +1,7 @@
-borders
 
 
 extras
+   -keybinds for saving and loading
    -replace exits with crosses and highlight red
    -replace delete with trash cans and have the confirm box tell what it does
    -replace logout with symbol

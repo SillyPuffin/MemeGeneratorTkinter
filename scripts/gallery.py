@@ -58,33 +58,37 @@ class Gallery():
 
     def createTopBar(self):
         """Creates the top UI bar where the title and buttons are located"""
-        self.TopFrame = ctk.CTkFrame(master = self.frame, border_color=colours.backgroundHighlight, border_width=2,corner_radius=0)
+        self.TopFrame = ctk.CTkFrame(master = self.frame,bg_color=colours.backgroundHighlight, border_color=colours.backgroundHighlight, border_width=2,corner_radius=0)
         self.TopFrame.pack_propagate(False)
         self.TopFrame.pack(side='top',fill=tk.X)
 
         #button for new
-        #does nothing at the moment because they dont exist
-        createNew = ctk.CTkButton(master= self.TopFrame, text='Create Meme', font=('calibri',25),corner_radius=8, fg_color=colours.button,hover_color=colours.buttonHover,command=self.openEmptyImage)
-        createNew.pack(side=tk.LEFT, anchor='n' ,padx=10,pady=10)
+        self.plusImage = ctk.CTkImage(Image.open('Graphics/plus.png'),None,(30,30))
+        createNew = ctk.CTkButton(master= self.TopFrame, text='', width=0, image=self.plusImage, font=('calibri',25),corner_radius=8, fg_color=colours.button,hover_color=colours.buttonHover,command=self.openEmptyImage)
+        createNew.pack(side=tk.LEFT, anchor='n' ,padx=(10,5),pady=10)
 
         #sigmamaaaaaaaaaaaamustardddddddddd
-        loadimageButton = ctk.CTkButton(master=self.TopFrame, text='Load Image', font=('calibri',25),fg_color=colours.button, hover_color=colours.buttonHover, command=self.openImageFromFile)
-        loadimageButton.pack(side=tk.LEFT , anchor = 'nw', padx=10,pady=10)
+        self.loadImage = ctk.CTkImage(Image.open('Graphics/Loadfile.png'), None, (30,30))
+        loadimageButton = ctk.CTkButton(master=self.TopFrame, text='',image=self.loadImage,width=0, font=('calibri',25),fg_color=colours.button, hover_color=colours.buttonHover, command=self.openImageFromFile)
+        loadimageButton.pack(side=tk.LEFT , anchor = 'nw', padx=5,pady=10)
 
         #delete all images
-        deleteAll = ctk.CTkButton(master=self.TopFrame, text='Delete All', font=('calibri',25), fg_color=colours.redButton, hover_color=colours.redButtonHover, command=self.deleteAll)
-        deleteAll.pack(side=tk.LEFT, anchor='n',padx=10,pady=10)
+        self.trashImage = ctk.CTkImage(Image.open("Graphics/Trash.png"),None,(30,30))
+        deleteAll = ctk.CTkButton(master=self.TopFrame, text='',image=self.trashImage,width=0, font=('calibri',25), fg_color=colours.redButton, hover_color=colours.redButtonHover, command=self.deleteAll)
+        deleteAll.pack(side=tk.LEFT, anchor='n',padx=5,pady=10)
 
         #button for close
-        CloseApp = ctk.CTkButton(master= self.TopFrame, text='Exit', font=('calibri',25),fg_color=colours.button,hover_color=colours.buttonHover,command=self.main.closeApp)
+        self.closeicon = ctk.CTkImage(Image.open("Graphics/close.png"),None,(30,30))
+        CloseApp = ctk.CTkButton(master= self.TopFrame, text='',image=self.closeicon,width=0, font=('calibri',25),fg_color=colours.backgroundColour,hover_color=colours.redButton,command=self.main.closeApp)
         CloseApp.pack(side=tk.RIGHT, anchor='n' ,padx=10,pady=10)
 
         #button for logout
-        logOut = ctk.CTkButton(master= self.TopFrame, text='Logout', font=('calibri',25),fg_color=colours.button,hover_color=colours.buttonHover, command=self.switchToLogIn)
+        self.logicon = ctk.CTkImage(Image.open("Graphics/Logout.png"),None,(30,30))
+        logOut = ctk.CTkButton(master= self.TopFrame, text='',image=self.logicon, width=0, font=('calibri',25),fg_color=colours.button,hover_color=colours.buttonHover, command=self.switchToLogIn)
         logOut.pack(side=tk.RIGHT, anchor='n', pady=10)
 
         #deleteaccount
-        deleteaccount = ctk.CTkButton(master=self.TopFrame, text='Delete Account', font=('calibri',25),fg_color=colours.redButton, hover_color=colours.redButtonHover,command=self.tryDeleteAccount)
+        deleteaccount = ctk.CTkButton(master=self.TopFrame, text='',image=self.trashImage,width=0, font=('calibri',25),fg_color=colours.redButton, hover_color=colours.redButtonHover,command=self.tryDeleteAccount)
         deleteaccount.pack(side=tk.RIGHT, anchor='n',pady=10,padx=10)
 
         #title in the center

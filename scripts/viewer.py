@@ -86,13 +86,13 @@ class Viewer():
         self.topHeight = backButton.winfo_reqheight() + 10*2 #used to calculate the height of the top bar
 
         #title in the center
-        Title = ctk.CTkLabel(master=self.TopFrame, text_color=colours.Heading, font=('impact',40), text='Image Viewer')
-        Title.place(relx=0.5,rely=0.5,anchor='center')
+        self.Title = ctk.CTkLabel(master=self.TopFrame, text_color=colours.Heading, font=('impact',40), text='Image Viewer')
+        self.Title.place(relx=0.5,rely=0.5,anchor='center')
 
         self.gallery.root.update_idletasks()
-        self.TopFrame.configure(height=Title.winfo_height()+10)
+        self.TopFrame.configure(height=self.Title.winfo_height()+10)
 
-        newHeight = Title.winfo_height()+10
+        newHeight = self.Title.winfo_height()+10
         if newHeight > self.topHeight:
             self.topHeight = newHeight #if the height of the title +padding is bigger than the buttons + padding then use title
 
@@ -125,6 +125,8 @@ class Viewer():
         meme = Image.open(fullpath)
         meme.thumbnail((self.imageWidth, self.imageHeight))
         self.meme = ImageTk.PhotoImage(meme)
+
+        self.Title.configure(text=f"Image Viewer - {path}")
 
         self.imagelabel = tk.Label(master=self.ImageDisplayFrame, bg=colours.backgroundHighlight, image=self.meme)
         self.imagelabel.place(relx=0.5,rely=0.5, anchor ='center')
@@ -159,6 +161,8 @@ class Viewer():
         self.sharer.set_image_name(newPath)
         prefix = database.getFolderPath(self.id, self.gallery.DatabasePath)
         fullPath = prefix + "/" + newPath
+
+        self.Title.configure(text=f"Image Viewer - {newPath}")
 
         meme = Image.open(fullPath)
         meme.thumbnail((self.imageWidth,self.imageHeight))

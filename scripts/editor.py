@@ -72,6 +72,8 @@ class Editor():
 
             database.saveImage(self.image, self.imageName +'.png', savePath)
 
+            self.title.configure(text=f'Editor - {self.imageName}')
+
             successSavelabel = tk.Label(master=self.saveFrame, text='Saving Successful', font=('calibri',20), fg=colours.successText,bg=colours.backgroundHighlight)
             successSavelabel.grid(row=4, column=0, sticky='w')
             self.root.update()
@@ -102,12 +104,13 @@ class Editor():
         self.root.update_idletasks()
         self.imageWidth = self.main.screenSize[0] - self.leftWindow.winfo_width() - 20
         self.imageHeight = self.main.screenSize[1] - self.topFrame.winfo_height() - 20
-        self.resetBoxes()
 
         self.size= 40
         self.baseImage = Image.open(path)
         self.updateImage()
         self.setDisplayImage()
+
+        self.resetBoxes()
 
         self.aspectRatio = self.image.height / self.image.width
         self.unsizedImage = self.baseImage.copy()
