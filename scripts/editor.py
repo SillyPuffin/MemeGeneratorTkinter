@@ -146,6 +146,10 @@ class Editor():
         self.toptickvar.set(0)
         self.bottomtickvar.set(0)
 
+        self.textred.col.set(str(0))
+        self.textblue.col.set(str(0))
+        self.textgreen.col.set(str(0))
+
         self.root.focus()
 
         if self.image:
