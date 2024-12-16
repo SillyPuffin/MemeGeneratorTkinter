@@ -107,6 +107,7 @@ class Editor():
 
         self.size= 40
         self.baseImage = Image.open(path)
+        self.baseImage.convert("RGB")
         self.updateImage()
         self.setDisplayImage()
 
@@ -141,6 +142,9 @@ class Editor():
 
         self.imageNameBox.variable.set("")
         self.imageNameBox.leaveBox()
+
+        self.toptickvar.set(0)
+        self.bottomtickvar.set(0)
 
         self.root.focus()
 
@@ -671,7 +675,6 @@ class Editor():
         green = self.getColour(self.textgreen.col)
         blue = self.getColour(self.textblue.col)
         textColour = (red,green,blue)
-
 
         if orientation == 'top':
             for i in range(len(text)):
