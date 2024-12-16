@@ -439,12 +439,16 @@ class Editor():
         try:
             x=self.resizex.get()
             x= int(x)
+            if x < 1:
+                x = 1
         except:
             x = self.image.width
 
         try:
             y= self.resizey.get()
             y = int(y)
+            if y < 1:
+                y=1
         except:
             y = self.image.height
 
