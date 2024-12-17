@@ -68,6 +68,16 @@ class Editor():
         if self.imageNameBox.userTyped and self.imageNameBox.textBox.get() != '':
             self.imageName = self.imageNameBox.textBox.get()
 
+            invalid = '/\:*?"<>|'
+            for char in invalid:
+                if char in self.imageName:
+                    invalidSavelabel = tk.Label(master=self.saveFrame, text='Name cannot contain /\:*?"<>| ', font=('calibri',20), fg=colours.alertText,bg=colours.backgroundHighlight)
+                    invalidSavelabel.grid(row=4, column=0, sticky='w')
+                    self.root.update()
+                    sleep(1.5)
+                    invalidSavelabel.grid_forget()
+                    return 0
+
             savePath = database.getFolderPath(self.currentAccount, self.DatabasePath)
 
             database.saveImage(self.image, self.imageName +'.png', savePath)
@@ -81,7 +91,7 @@ class Editor():
             successSavelabel.grid_forget()
         else:
             print('The image has no Name')
-            failSavelabel = tk.Label(master=self.saveFrame, text='Image has No Name', font=('calibri',12), fg=colours.alertText,bg=colours.backgroundHighlight)
+            failSavelabel = tk.Label(master=self.saveFrame, text='Image has No Name', font=('calibri',20), fg=colours.alertText,bg=colours.backgroundHighlight)
             failSavelabel.grid(row=4, column=0, sticky='w')
             self.root.update()
             sleep(0.75)
