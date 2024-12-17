@@ -131,7 +131,7 @@ class Gallery():
             #add the new icons if its changed
             self.clearMemeIcons()
             for index, item in enumerate(filenames):
-                if item[-4:] == ".png" or item[-4:] == ".jpg":
+                if item[-4:].lower() == ".png" or item[-4:].lower() == ".jpg":
                     image = Image.open(f"{Path}/{item}")
                     #resize the image to fit within the icon size
                     image.thumbnail((iconSize,iconSize))
