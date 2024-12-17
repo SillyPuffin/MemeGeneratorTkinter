@@ -106,7 +106,11 @@ class Editor():
         self.imageHeight = self.main.screenSize[1] - self.topFrame.winfo_height() - 20
 
         self.size= 40
-        self.baseImage = Image.open(path)
+        try:
+            self.baseImage = Image.open(path)
+        except:
+            self.backToGallery()
+            return None
         self.baseImage = self.baseImage.convert('RGB')
         self.updateImage()
         self.setDisplayImage()

@@ -3,7 +3,6 @@
 extras
    -load a blank image if there is a giant image
    -show if you cant save a file because it has invalide characters like.
-   -optimise typing by updating on key up instead
    -keybinds for saving and loading
    -add a little subtitle which says how many memes each account has when sharing
    

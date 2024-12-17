@@ -132,13 +132,20 @@ class Gallery():
             self.clearMemeIcons()
             for index, item in enumerate(filenames):
                 if item[-4:].lower() == ".png" or item[-4:].lower() == ".jpg":
-                    image = Image.open(f"{Path}/{item}")
-                    #resize the image to fit within the icon size
-                    image.thumbnail((iconSize,iconSize))
-                    image = ImageTk.PhotoImage(image)
+                    try:
+                        image = Image.open(f"{Path}/{item}")
+                        #resize the image to fit within the icon size
+                        image.thumbnail((iconSize,iconSize))
+                        image = ImageTk.PhotoImage(image)
+                        
+                        newIcon = imageicon.ImageIcon(self,image,iconSize,index,item)
+                        self.memeIcons.append(newIcon)
+                    except:
+                        self.memeIcons.append(None)
 
-                    newIcon = imageicon.ImageIcon(self,image,iconSize,index,item)
-                    self.memeIcons.append(newIcon)
+        for item in self.memeIcons:
+            if item == None:
+                self.memeIcons.remove(None)
             
     def packMemeIcons(self):
         """pack all the meme thumbnails to the scroll area"""
