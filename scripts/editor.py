@@ -107,7 +107,7 @@ class Editor():
 
         self.size= 40
         self.baseImage = Image.open(path)
-        self.baseImage.convert("RGB")
+        self.baseImage = self.baseImage.convert('RGB')
         self.updateImage()
         self.setDisplayImage()
 
@@ -142,13 +142,6 @@ class Editor():
 
         self.imageNameBox.variable.set("")
         self.imageNameBox.leaveBox()
-
-        self.toptickvar.set(0)
-        self.bottomtickvar.set(0)
-
-        self.textred.col.set(str(0))
-        self.textblue.col.set(str(0))
-        self.textgreen.col.set(str(0))
 
         self.root.focus()
 
@@ -447,16 +440,12 @@ class Editor():
         try:
             x=self.resizex.get()
             x= int(x)
-            if x < 1:
-                x = 1
         except:
             x = self.image.width
 
         try:
             y= self.resizey.get()
             y = int(y)
-            if y < 1:
-                y=1
         except:
             y = self.image.height
 
@@ -679,6 +668,7 @@ class Editor():
         green = self.getColour(self.textgreen.col)
         blue = self.getColour(self.textblue.col)
         textColour = (red,green,blue)
+
 
         if orientation == 'top':
             for i in range(len(text)):
