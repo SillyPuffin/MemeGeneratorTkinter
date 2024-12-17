@@ -28,10 +28,11 @@ class EntryBox():
     def createBox(self):
         """creates the entry box and gets all variables ready"""
         self.variable = tk.StringVar()
-        self.variable.trace_add('write', self.executeCommand)
+        #self.variable.trace_add('write', self.executeCommand)
         self.textBox = ctk.CTkEntry(master=self.master, font=self.default_font, width=self.width, height = self.height, bg_color=self.bg,fg_color=self.fg,border_color=self.border_colour,border_width=2, text_color=self.default_colour, textvariable=self.variable)
         self.textBox.insert(0, self.default)
 
+        self.textBox.bind("<KeyRelease>", self.executeCommand)
         self.textBox.bind('<KeyPress>',self.setUserTyped, add=True)
         self.textBox.bind('<FocusIn>', self.enterBox)
         self.textBox.bind('<FocusOut>', self.leaveBox)
