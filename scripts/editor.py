@@ -453,6 +453,12 @@ class Editor():
         except:
             y = self.image.height
 
+        if x > 10000:
+                x = 10000
+        
+        if y > 10000:
+                y = 10000
+
         self.baseImage = self.baseImage.resize((x,y), Image.Resampling.NEAREST)
         self.updateImage()
 
